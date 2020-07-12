@@ -11,7 +11,6 @@
  */
 package ru.orangesoftware.financisto.activity
 
-import android.app.TabActivity
 import android.content.Context
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
@@ -20,14 +19,22 @@ import android.util.Log
 import android.view.Window
 import android.widget.TabHost
 import android.widget.TabHost.OnTabChangeListener
+import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.viewpager2.adapter.FragmentStateAdapter
+import androidx.viewpager2.widget.ViewPager2
+import com.google.android.material.tabs.TabLayout
+import com.google.android.material.tabs.TabLayoutMediator
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode.MAIN
+import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.R.drawable
-import ru.orangesoftware.financisto.R.string
+import ru.orangesoftware.financisto.accountlist.AccountListFragment
+import ru.orangesoftware.financisto.blotter.BlotterFragment
 import ru.orangesoftware.financisto.bus.GreenRobotBus
 import ru.orangesoftware.financisto.bus.GreenRobotBus_
 import ru.orangesoftware.financisto.bus.RefreshCurrentTab
-import ru.orangesoftware.financisto.bus.SwitchToMenuTabEvent
 import ru.orangesoftware.financisto.db.DatabaseAdapter
 import ru.orangesoftware.financisto.db.DatabaseHelper
 import ru.orangesoftware.financisto.dialog.WebViewDialog
@@ -35,36 +42,39 @@ import ru.orangesoftware.financisto.utils.CurrencyCache
 import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.utils.PinProtection
 
-class MainActivity : TabActivity(), OnTabChangeListener {
+class MainActivity : AppCompatActivity(), OnTabChangeListener {
     private var greenRobotBus: GreenRobotBus? = null
+
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(MyPreferences.switchLocale(base))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        greenRobotBus = GreenRobotBus_.getInstance_(this)
         requestWindowFeature(Window.FEATURE_NO_TITLE)
+        setContentView(R.layout.activity_main)
+        greenRobotBus = GreenRobotBus_.getInstance_(this)
+
+        val tabLayout = findViewById<TabLayout>(R.id.tabs)
+        val viewPager = findViewById<ViewPager2>(R.id.fragment_container)
+        val adapter = FragmentStateAdapterImpl(this)
+        viewPager.adapter = adapter
+        TabLayoutMediator(tabLayout, viewPager, adapter.createStrategy()).attach()
         initialLoad()
-        val tabHost = tabHost
-        setupAccountsTab(tabHost)
+//        val tabHost = tabHost
+        // setupAccountsTab(tabHost)
         //setupBlotterTab(tabHost)
         //setupBudgetsTab(tabHost)
         //setupReportsTab(tabHost)
         //setupMenuTab(tabHost)
-        val screen = MyPreferences.getStartupScreen(this)
-        tabHost.setCurrentTabByTag(screen.tag)
-        tabHost.setOnTabChangedListener(this)
-    }
-
-    @Subscribe(threadMode = MAIN)
-    fun onSwitchToMenuTab(event: SwitchToMenuTabEvent?) {
-        tabHost.setCurrentTabByTag("menu")
+//        val screen = MyPreferences.getStartupScreen(this)
+//        tabHost.setCurrentTabByTag(screen.tag)
+//        tabHost.setOnTabChangedListener(this)
     }
 
     @Subscribe(threadMode = MAIN)
     fun onRefreshCurrentTab(e: RefreshCurrentTab?) {
-        refreshCurrentTab()
+//        refreshCurrentTab()
     }
 
     override fun onResume() {
@@ -104,35 +114,35 @@ class MainActivity : TabActivity(), OnTabChangeListener {
                     DatabaseHelper.CATEGORY_TABLE,
                     0,
                     "title",
-                    getString(string.no_category)
+                    getString(R.string.no_category)
                 )
                 updateFieldInTable(
                     x,
                     DatabaseHelper.CATEGORY_TABLE,
                     -1,
                     "title",
-                    getString(string.split)
+                    getString(R.string.split)
                 )
                 updateFieldInTable(
                     x,
                     DatabaseHelper.PROJECT_TABLE,
                     0,
                     "title",
-                    getString(string.no_project)
+                    getString(R.string.no_project)
                 )
                 updateFieldInTable(
                     x,
                     DatabaseHelper.LOCATIONS_TABLE,
                     0,
                     "name",
-                    getString(string.current_location)
+                    getString(R.string.current_location)
                 )
                 updateFieldInTable(
                     x,
                     DatabaseHelper.LOCATIONS_TABLE,
                     0,
                     "title",
-                    getString(string.current_location)
+                    getString(R.string.current_location)
                 )
                 x.setTransactionSuccessful()
             } finally {
@@ -182,44 +192,19 @@ class MainActivity : TabActivity(), OnTabChangeListener {
     }
 
     fun refreshCurrentTab() {
-        val currentActivity = localActivityManager.currentActivity
-        if (currentActivity is RefreshSupportedActivity) {
-            val activity = currentActivity as RefreshSupportedActivity
-            activity.recreateCursor()
-            activity.integrityCheck()
-        }
-    }
-
-    private fun setupAccountsTab(tabHost: TabHost) {
-        tabHost.addTab(
-            tabHost.newTabSpec("accounts")
-                .setIndicator(
-                    getString(string.accounts),
-                    resources.getDrawable(drawable.ic_tab_accounts)
-                )
-                .setContent(Intent(this, AccountListActivity::class.java))
-        )
-    }
-
-    private fun setupBlotterTab(tabHost: TabHost) {
-        val intent = Intent(this, BlotterActivity::class.java)
-        intent.putExtra(BlotterActivity.SAVE_FILTER, true)
-        intent.putExtra(BlotterActivity.EXTRA_FILTER_ACCOUNTS, true)
-        tabHost.addTab(
-            tabHost.newTabSpec("blotter")
-                .setIndicator(
-                    getString(string.blotter),
-                    resources.getDrawable(drawable.ic_tab_blotter)
-                )
-                .setContent(intent)
-        )
+//        val currentActivity = localActivityManager.currentActivity
+//        if (currentActivity is RefreshSupportedActivity) {
+//            val activity = currentActivity as RefreshSupportedActivity
+//            activity.recreateCursor()
+//            activity.integrityCheck()
+//        }
     }
 
     private fun setupBudgetsTab(tabHost: TabHost) {
         tabHost.addTab(
             tabHost.newTabSpec("budgets")
                 .setIndicator(
-                    getString(string.budgets),
+                    getString(R.string.budgets),
                     resources.getDrawable(drawable.ic_tab_budgets)
                 )
                 .setContent(Intent(this, BudgetListActivity::class.java))
@@ -230,7 +215,7 @@ class MainActivity : TabActivity(), OnTabChangeListener {
         tabHost.addTab(
             tabHost.newTabSpec("reports")
                 .setIndicator(
-                    getString(string.reports),
+                    getString(R.string.reports),
                     resources.getDrawable(drawable.ic_tab_reports)
                 )
                 .setContent(Intent(this, ReportsListActivity::class.java))
@@ -241,10 +226,37 @@ class MainActivity : TabActivity(), OnTabChangeListener {
         tabHost.addTab(
             tabHost.newTabSpec("menu")
                 .setIndicator(
-                    getString(string.menu),
+                    getString(R.string.menu),
                     resources.getDrawable(drawable.ic_tab_menu)
                 )
                 .setContent(Intent(this, MenuListActivity_::class.java))
         )
     }
+
+    class FragmentStateAdapterImpl(val activity: FragmentActivity) :
+        FragmentStateAdapter(activity) {
+        enum class Tabs {
+            ACCOUNT_LIST,
+            BLOTTER
+        }
+
+        override fun getItemCount(): Int {
+            return Tabs.values().size
+        }
+
+        override fun createFragment(position: Int): Fragment = when (position) {
+            Tabs.ACCOUNT_LIST.ordinal -> AccountListFragment()
+            Tabs.BLOTTER.ordinal -> BlotterFragment.newInstance(saveFilter = true)
+            else -> TODO("Default fragment not yet implemented")
+        }
+
+        fun createStrategy() = TabLayoutMediator.TabConfigurationStrategy { tab, position ->
+            tab.text = when (position) {
+                Tabs.ACCOUNT_LIST.ordinal -> activity.getString(R.string.accounts)
+                Tabs.BLOTTER.ordinal -> activity.getString(R.string.blotter)
+                else -> "Unknown"
+            }
+        }
+    }
+
 }
