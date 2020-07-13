@@ -7,6 +7,7 @@
  */
 package ru.orangesoftware.financisto.dialog;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -19,7 +20,6 @@ import ru.orangesoftware.financisto.R;
 import ru.orangesoftware.financisto.activity.AccountActivity;
 import ru.orangesoftware.financisto.activity.AccountListActivity;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
-import ru.orangesoftware.financisto.db.MyEntityManager;
 import ru.orangesoftware.financisto.model.*;
 import ru.orangesoftware.financisto.utils.Utils;
 import ru.orangesoftware.financisto.view.NodeInflater;
@@ -28,14 +28,14 @@ import static ru.orangesoftware.financisto.utils.Utils.isNotEmpty;
 
 public class AccountInfoDialog {
 
-    private final AccountListActivity parentActivity;
+    private final Activity parentActivity;
     private final long accountId;
     private final DatabaseAdapter db;
     private final NodeInflater inflater;
     private final LayoutInflater layoutInflater;
     private final Utils u;
 
-    public AccountInfoDialog(AccountListActivity parentActivity, long accountId,
+    public AccountInfoDialog(Activity parentActivity, long accountId,
                              DatabaseAdapter db, NodeInflater inflater) {
         this.parentActivity = parentActivity;
         this.accountId = accountId;
