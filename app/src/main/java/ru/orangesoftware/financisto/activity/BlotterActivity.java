@@ -75,6 +75,12 @@ public class BlotterActivity extends AbstractListActivity {
 
     protected boolean isAccountBlotter = false;
     protected boolean showAllBlotterButtons = true;
+    private BlotterOperations.DeletionCallback callback = new BlotterOperations.DeletionCallback() {
+        @Override
+        public void onDeleteTransaction(long transactionId) {
+            deleteTransaction(transactionId);
+        }
+    };
 
     public BlotterActivity(int layoutId) {
         super(layoutId);
@@ -185,10 +191,12 @@ public class BlotterActivity extends AbstractListActivity {
 
             searchText.addTextChangedListener(new TextWatcher() {
                 @Override
-                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+                public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
 
                 @Override
-                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+                public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                }
 
                 @Override
                 public void afterTextChanged(Editable editable) {
@@ -366,12 +374,12 @@ public class BlotterActivity extends AbstractListActivity {
     };
 
     private void clearTransaction(long selectedId) {
-        new BlotterOperations(this, db, selectedId).clearTransaction();
+        new BlotterOperations(this, db, selectedId, callback).clearTransaction();
         recreateCursor();
     }
 
     private void reconcileTransaction(long selectedId) {
-        new BlotterOperations(this, db, selectedId).reconcileTransaction();
+        new BlotterOperations(this, db, selectedId, callback).reconcileTransaction();
         recreateCursor();
     }
 
@@ -406,7 +414,7 @@ public class BlotterActivity extends AbstractListActivity {
                     duplicateTransaction(id, 1);
                     return true;
                 case MENU_SAVE_AS_TEMPLATE:
-                    new BlotterOperations(this, db, id).duplicateAsTemplate();
+                    new BlotterOperations(this, db, id, callback).duplicateAsTemplate();
                     Toast.makeText(this, R.string.save_as_template_success, Toast.LENGTH_SHORT).show();
                     return true;
             }
@@ -415,7 +423,7 @@ public class BlotterActivity extends AbstractListActivity {
     }
 
     private long duplicateTransaction(long id, int multiplier) {
-        long newId = new BlotterOperations(this, db, id).duplicateTransaction(multiplier);
+        long newId = new BlotterOperations(this, db, id, callback).duplicateTransaction(multiplier);
         String toastText;
         if (multiplier > 1) {
             toastText = getString(R.string.duplicate_success_with_multiplier, multiplier);
@@ -471,7 +479,7 @@ public class BlotterActivity extends AbstractListActivity {
     }
 
     private void deleteTransaction(long id) {
-        new BlotterOperations(this, db, id).deleteTransaction();
+        new BlotterOperations(this, db, id, callback).deleteTransaction();
     }
 
     protected void afterDeletingTransaction(long id) {
@@ -485,7 +493,7 @@ public class BlotterActivity extends AbstractListActivity {
     }
 
     private void editTransaction(long id) {
-        new BlotterOperations(this, db, id).editTransaction();
+        new BlotterOperations(this, db, id, callback).editTransaction();
     }
 
     @Override
@@ -517,7 +525,7 @@ public class BlotterActivity extends AbstractListActivity {
             long id = duplicateTransaction(templateId, multiplier);
             Transaction t = db.getTransaction(id);
             if (t.fromAmount == 0 || edit) {
-                new BlotterOperations(this, db, id).asNewFromTemplate().editTransaction();
+                new BlotterOperations(this, db, id, callback).asNewFromTemplate().editTransaction();
             }
         }
     }
@@ -567,7 +575,7 @@ public class BlotterActivity extends AbstractListActivity {
 
     private void showTransactionInfo(long id) {
         TransactionInfoDialog transactionInfoView = new TransactionInfoDialog(this, db, inflater);
-        transactionInfoView.show(this, id);
+        transactionInfoView.show(this, id, callback);
     }
 
     @Override
@@ -576,8 +584,7 @@ public class BlotterActivity extends AbstractListActivity {
     }
 
     @Override
-    public void onBackPressed()
-    {
+    public void onBackPressed() {
         FrameLayout searchLayout = findViewById(R.id.search_text_frame);
         if (searchLayout != null && searchLayout.getVisibility() == View.VISIBLE) {
             searchLayout.setVisibility(View.GONE);
