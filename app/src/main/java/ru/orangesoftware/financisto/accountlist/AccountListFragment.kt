@@ -309,13 +309,7 @@ class AccountListFragment : AbstractListFragment() {
         position: Int,
         id: Long
     ) {
-        if (MyPreferences.isQuickMenuEnabledForAccount(requireContext())) {
-            selectedId = id
-            prepareAccountActionGrid()
-            accountActionGrid!!.show(v)
-        } else {
-            showAccountTransactions(id)
-        }
+        showAccountTransactions(id)
     }
 
     override fun viewItem(
