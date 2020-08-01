@@ -91,7 +91,7 @@ open class BlotterFragment : AbstractListFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        inflatedView = inflater.inflate(R.layout.blotter, container, false)
+        inflatedView = inflater.inflate(R.layout.fragment_blotter, container, false)
         return inflatedView
     }
 

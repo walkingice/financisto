@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  Copyright (c) 2010 Denis Solonenko.
+  All rights reserved. This program and the accompanying materials
+  are made available under the terms of the GNU Public License v2.0
+  which accompanies this distribution, and is available at
+  http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
+  
+  Contributors:
+      Denis Solonenko - initial API and implementation
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <ListView
+        android:id="@android:id/list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:cacheColorHint="@android:color/transparent"
+        android:fastScrollEnabled="true" />
+
+    <FrameLayout
+        android:id="@+id/search_text_frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:padding="5dp"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/search_text"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:autofillHints=""
+            android:inputType="text"
+            android:maxLines="1" />
+
+        <ImageButton
+            android:id="@+id/search_text_clear"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="10dp"
+            android:background="@android:drawable/ic_delete"
+            android:visibility="gone" />
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/integrity_error"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#FF0000"
+        android:gravity="center"
+        android:padding="3dp"
+        android:text="@string/integrity_error"
+        android:textColor="#FFFFFF"
+        android:visibility="gone" />
+
+    <LinearLayout style="@style/BottomBar">
+
+        <ImageButton
+            android:id="@+id/bAdd"
+            style="@style/BottomBarButton"
+            android:src="@drawable/actionbar_add_big" />
+
+        <ImageButton
+            android:id="@+id/bTransfer"
+            style="@style/BottomBarButton"
+            android:src="@drawable/actionbar_transfer"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/bTemplate"
+            style="@style/BottomBarButton"
+            android:src="@drawable/actionbar_tiles_large"
+            android:visibility="gone" />
+
+        <ImageButton
+            android:id="@+id/bSearch"
+            style="@style/BottomBarButton"
+            android:src="@android:drawable/ic_menu_search" />
+
+        <ImageButton
+            android:id="@+id/bFilter"
+            style="@style/BottomBarButton"
+            android:src="@drawable/actionbar_filter" />
+
+        <ImageButton
+            android:id="@+id/bMenu"
+            style="@style/BottomBarButton"
+            android:src="@drawable/actionbar_dot_menu" />
+
+        <include layout="@layout/total_text" />
+    </LinearLayout>
+</LinearLayout>

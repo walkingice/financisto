@@ -57,7 +57,7 @@ class AccountListFragment : AbstractListFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        inflatedView = inflater.inflate(R.layout.account_list, container, false)
+        inflatedView = inflater.inflate(R.layout.fragment_account_list, container, false)
         return inflatedView
     }
 
