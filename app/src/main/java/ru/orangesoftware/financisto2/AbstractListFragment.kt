@@ -144,7 +144,7 @@ abstract class AbstractListFragment : Fragment() {
     open fun integrityCheck() {}
 
     protected abstract fun createCursor(): Cursor
-    protected abstract fun createAdapter(cursor: Cursor?): ListAdapter
+    protected abstract fun createAdapter(cursor: Cursor): ListAdapter
     protected abstract fun deleteItem(view: View, position: Int, id: Long)
     protected abstract fun editItem(view: View, position: Int, id: Long)
     protected abstract fun viewItem(view: View, position: Int, id: Long)

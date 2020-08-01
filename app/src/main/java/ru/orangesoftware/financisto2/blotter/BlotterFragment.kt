@@ -38,7 +38,6 @@ import ru.orangesoftware.financisto.activity.MyQuickAction
 import ru.orangesoftware.financisto.activity.SelectTemplateActivity
 import ru.orangesoftware.financisto.activity.TransactionActivity
 import ru.orangesoftware.financisto.activity.TransferActivity
-import ru.orangesoftware.financisto.adapter.BlotterListAdapter
 import ru.orangesoftware.financisto.adapter.TransactionsListAdapter
 import ru.orangesoftware.financisto.blotter.AccountTotalCalculationTask
 import ru.orangesoftware.financisto.blotter.BlotterFilter
@@ -278,7 +277,7 @@ open class BlotterFragment : AbstractListFragment() {
         }
     }
 
-    override fun createAdapter(cursor: Cursor?): ListAdapter {
+    override fun createAdapter(cursor: Cursor): ListAdapter {
         return if (isAccountBlotter) {
             TransactionsListAdapter(requireContext(), db, cursor)
         } else {

@@ -231,7 +231,7 @@ class AccountListFragment : AbstractListFragment() {
 
     }
 
-    override fun createAdapter(cursor: Cursor?): ListAdapter {
+    override fun createAdapter(cursor: Cursor): ListAdapter {
         return AccountListAdapter2(requireContext(), cursor)
     }
 
