@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
 import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ImageButton
@@ -21,11 +20,14 @@ import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.PinProtection
 import java.util.LinkedList
 
+private const val MENU_VIEW = Menu.FIRST + 1
+private const val MENU_EDIT = Menu.FIRST + 2
+private const val MENU_DELETE = Menu.FIRST + 3
+private const val MENU_ADD = Menu.FIRST + 4
+
 abstract class AbstractListFragment : Fragment() {
-    val MENU_VIEW = Menu.FIRST + 1
-    val MENU_EDIT = Menu.FIRST + 2
-    val MENU_DELETE = Menu.FIRST + 3
-    val MENU_ADD = Menu.FIRST + 4
+
+    protected var enablePin = true
 
     protected lateinit var db: DatabaseAdapter
     protected lateinit var cursor: Cursor
@@ -33,12 +35,9 @@ abstract class AbstractListFragment : Fragment() {
     protected lateinit var listView: ListView
     protected lateinit var bAdd: ImageButton
 
-    protected var enablePin = true
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        db = DatabaseAdapter(requireContext())
-        db.open()
+        db = DatabaseAdapter(requireContext()).also { it.open() }
         cursor = createCursor()
     }
 
@@ -63,34 +62,22 @@ abstract class AbstractListFragment : Fragment() {
         listView = view.findViewById(android.R.id.list)
         internalOnCreate(view, savedInstanceState)
         recreateAdapter(cursor)
-        listView.setOnItemLongClickListener { _: AdapterView<*>?, v: View?, position: Int, id: Long ->
-            val popupMenu = PopupMenu(requireContext(), v)
-            val menu = popupMenu.menu
-            val menus: List<MenuItemInfo> = createContextMenus(id)
-            var i = 0
-            for (m in menus) {
-                if (m.enabled) {
-                    menu.add(0, m.menuId, i++, m.titleId)
-                }
-            }
-            popupMenu.setOnMenuItemClickListener { item: MenuItem ->
-                onPopupItemSelected(item.itemId, v, position, id)
-            }
-            popupMenu.show()
+        listView.setOnItemLongClickListener { _: AdapterView<*>?, v: View, position: Int, id: Long ->
+            onItemLongClick(v, position, id)
             true
         }
-        listView.setOnItemClickListener { _, v, position, id -> onItemClick(v, position, id) }
+        listView.setOnItemClickListener { _, v: View, position, id -> onItemClick(v, position, id) }
+    }
+
+    protected open fun internalOnCreate(inflatedView: View, savedInstanceState: Bundle?) {
+        bAdd = inflatedView.findViewById(R.id.bAdd)
+        bAdd.setOnClickListener { addItem() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
             recreateCursor()
         }
-    }
-
-    protected open fun internalOnCreate(inflatedView: View, savedInstanceState: Bundle?) {
-        bAdd = inflatedView.findViewById(R.id.bAdd)
-        bAdd.setOnClickListener { arg0: View? -> addItem() }
     }
 
     protected open fun createContextMenus(id: Long): MutableList<MenuItemInfo> {
@@ -101,26 +88,31 @@ abstract class AbstractListFragment : Fragment() {
         return menus
     }
 
-    open fun onPopupItemSelected(itemId: Int, view: View?, position: Int, id: Long): Boolean {
-        return when (itemId) {
-            MENU_VIEW -> {
-                viewItem(view, position, id)
-                true
-            }
-            MENU_EDIT -> {
-                editItem(view, position, id)
-                true
-            }
-            MENU_DELETE -> {
-                deleteItem(view, position, id)
-                true
-            }
-            else -> false
+    open fun onPopupItemSelected(itemId: Int, view: View, position: Int, id: Long): Boolean {
+        when (itemId) {
+            MENU_VIEW -> viewItem(view, position, id)
+            MENU_EDIT -> editItem(view, position, id)
+            MENU_DELETE -> deleteItem(view, position, id)
+            else -> return false
         }
+        return true
     }
 
-    protected open fun onItemClick(v: View?, position: Int, id: Long) {
-        viewItem(v, position, id)
+
+    protected open fun onItemClick(view: View, position: Int, id: Long) {
+        viewItem(view, position, id)
+    }
+
+    protected open fun onItemLongClick(view: View, position: Int, id: Long) {
+        val popupMenu = PopupMenu(requireContext(), view)
+        val menu = popupMenu.menu
+        val menus: List<MenuItemInfo> = createContextMenus(id)
+        menus.filter { menuItemInfo -> menuItemInfo.enabled }
+            .forEachIndexed { i, m -> menu.add(0, m.menuId, i, m.titleId) }
+        popupMenu.setOnMenuItemClickListener {
+            onPopupItemSelected(it.itemId, view, position, id)
+        }
+        popupMenu.show()
     }
 
     protected open fun addItem() {}
@@ -153,7 +145,11 @@ abstract class AbstractListFragment : Fragment() {
 
     protected abstract fun createCursor(): Cursor
     protected abstract fun createAdapter(cursor: Cursor?): ListAdapter
-    protected abstract fun deleteItem(v: View?, position: Int, id: Long)
-    protected abstract fun editItem(v: View?, position: Int, id: Long)
-    protected abstract fun viewItem(v: View?, position: Int, id: Long)
+    protected abstract fun deleteItem(view: View, position: Int, id: Long)
+    protected abstract fun editItem(view: View, position: Int, id: Long)
+    protected abstract fun viewItem(view: View, position: Int, id: Long)
+
+    companion object {
+        const val LAST_MENU_INDEX = MENU_ADD
+    }
 }

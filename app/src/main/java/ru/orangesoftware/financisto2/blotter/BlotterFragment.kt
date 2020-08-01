@@ -65,10 +65,7 @@ open class BlotterFragment : AbstractListFragment() {
     private lateinit var nodeInflater: NodeInflater
     private var selectedId: Long = -1
 
-    private val MENU_DUPLICATE = MENU_ADD + 1
-    private val MENU_SAVE_AS_TEMPLATE = MENU_ADD + 2
-
-    protected var totalText: TextView? = null
+    protected lateinit var totalText: TextView
     protected lateinit var bFilter: ImageButton
     protected lateinit var bTransfer: ImageButton
     protected lateinit var bTemplate: ImageButton
@@ -101,22 +98,6 @@ open class BlotterFragment : AbstractListFragment() {
         nodeInflater = NodeInflater(inflater)
         inflatedView = inflater.inflate(R.layout.fragment_blotter, container, false)
         return inflatedView
-    }
-
-    protected open fun calculateTotals() {
-        calculationTask?.stop()
-        calculationTask?.cancel(true)
-        calculationTask = createTotalCalculationTask()
-        calculationTask!!.execute()
-    }
-
-    protected fun createTotalCalculationTask(): TotalCalculationTask? {
-        val filter = WhereFilter.copyOf(blotterFilter)
-        return if (filter.accountId > 0) {
-            AccountTotalCalculationTask(requireContext(), db, filter, totalText)
-        } else {
-            BlotterTotalCalculationTask(requireContext(), db, filter, totalText)
-        }
     }
 
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
@@ -164,10 +145,8 @@ open class BlotterFragment : AbstractListFragment() {
         bSearch = inflatedView.findViewById<ImageButton>(R.id.bSearch)
         bSearch.setOnClickListener { method: View? ->
             val searchText: EditText = inflatedView.findViewById<EditText>(R.id.search_text)
-            val searchLayout: FrameLayout =
-                inflatedView.findViewById<FrameLayout>(R.id.search_text_frame)
-            val searchTextClearButton: ImageButton =
-                inflatedView.findViewById<ImageButton>(R.id.search_text_clear)
+            val searchLayout: FrameLayout = inflatedView.findViewById(R.id.search_text_frame)
+            val searchTextClearBtn: ImageButton = inflatedView.findViewById(R.id.search_text_clear)
             val imm =
                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             searchText.onFocusChangeListener = OnFocusChangeListener { view: View, b: Boolean ->
@@ -175,7 +154,7 @@ open class BlotterFragment : AbstractListFragment() {
                     imm.hideSoftInputFromWindow(searchLayout.windowToken, 0)
                 }
             }
-            searchTextClearButton.setOnClickListener { searchText.setText("") }
+            searchTextClearBtn.setOnClickListener { searchText.setText("") }
             if (searchLayout.visibility == View.VISIBLE) {
                 imm.hideSoftInputFromWindow(searchLayout.windowToken, 0)
                 searchLayout.visibility = View.GONE
@@ -220,6 +199,136 @@ open class BlotterFragment : AbstractListFragment() {
         prepareAddButtonActionGrid()
     }
 
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        blotterFilter.toBundle(outState)
+    }
+
+    override fun recreateCursor() {
+        super.recreateCursor()
+        calculateTotals()
+    }
+
+    override fun createContextMenus(id: Long): MutableList<MenuItemInfo> {
+        return if (blotterFilter.isTemplate() || blotterFilter.isSchedule) {
+            super.createContextMenus(id)
+        } else {
+            val menus = super.createContextMenus(id)
+            menus.add(MenuItemInfo(MENU_DUPLICATE, R.string.duplicate))
+            menus.add(MenuItemInfo(MENU_SAVE_AS_TEMPLATE, R.string.save_as_template))
+            menus
+        }
+    }
+
+    override fun onPopupItemSelected(itemId: Int, view: View, position: Int, id: Long): Boolean {
+        if (!super.onPopupItemSelected(itemId, view, position, id)) {
+            when (itemId) {
+                MENU_DUPLICATE -> duplicateTransaction(id, 1)
+                MENU_SAVE_AS_TEMPLATE -> {
+                    BlotterOperations(this, db, id, callback).duplicateAsTemplate()
+                    Toast.makeText(
+                        requireContext(),
+                        R.string.save_as_template_success,
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+            return true
+        }
+        return false
+    }
+
+    override fun onActivityResult(
+        requestCode: Int,
+        resultCode: Int,
+        data: Intent?
+    ) {
+        if (requestCode == FILTER_REQUEST) {
+            if (resultCode == Activity.RESULT_FIRST_USER) {
+                blotterFilter.clear()
+            } else if (resultCode == Activity.RESULT_OK) {
+                blotterFilter = WhereFilter.fromIntent(data)
+            }
+            if (saveFilter) {
+                saveFilter()
+            }
+            applyFilter()
+            recreateCursor()
+        } else if (resultCode == Activity.RESULT_OK && requestCode == NEW_TRANSACTION_FROM_TEMPLATE_REQUEST && data != null) {
+            createTransactionFromTemplate(data)
+        }
+        if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_FIRST_USER) {
+            recreateCursor()
+        }
+    }
+
+    override fun addItem() {
+        if (showAllBlotterButtons) {
+            addItem(NEW_TRANSACTION_REQUEST, TransactionActivity::class.java)
+        } else {
+            addButtonActionGrid!!.show(bAdd)
+        }
+    }
+
+    override fun createCursor(): Cursor {
+        return if (isAccountBlotter) {
+            db.getBlotterForAccount(blotterFilter)
+        } else {
+            db.getBlotter(blotterFilter)
+        }
+    }
+
+    override fun createAdapter(cursor: Cursor?): ListAdapter {
+        return if (isAccountBlotter) {
+            TransactionsListAdapter(requireContext(), db, cursor)
+        } else {
+            BlotterListAdapter(requireContext(), db, cursor)
+        }
+    }
+
+    override fun deleteItem(view: View, position: Int, id: Long) {
+        deleteTransaction(id)
+    }
+
+    override fun editItem(view: View, position: Int, id: Long) {
+        editTransaction(id)
+    }
+
+    override fun onItemLongClick(view: View, position: Int, id: Long) {
+        if (MyPreferences.isQuickMenuEnabledForTransaction(requireContext())) {
+            selectedId = id
+            transactionActionGrid?.show(view)
+        } else {
+            showTransactionInfo(id)
+        }
+    }
+
+    override fun viewItem(view: View, position: Int, id: Long) {
+        showTransactionInfo(id)
+    }
+
+    override fun integrityCheck() {
+        val activity = requireActivity()
+        val check = IntegrityCheckRunningBalance(activity, db)
+        IntegrityCheckTask(activity).execute(check)
+    }
+
+    protected open fun calculateTotals() {
+        calculationTask?.stop()
+        calculationTask?.cancel(true)
+        calculationTask = createTotalCalculationTask()
+        calculationTask!!.execute()
+    }
+
+    protected fun createTotalCalculationTask(): TotalCalculationTask? {
+        val filter = WhereFilter.copyOf(blotterFilter)
+        return if (filter.accountId > 0) {
+            AccountTotalCalculationTask(requireContext(), db, filter, totalText)
+        } else {
+            BlotterTotalCalculationTask(requireContext(), db, filter, totalText)
+        }
+    }
+
     private fun applyPopupMenu() {
         bMenu = inflatedView.findViewById<ImageButton>(R.id.bMenu)
         if (isAccountBlotter) {
@@ -229,10 +338,8 @@ open class BlotterFragment : AbstractListFragment() {
                 val accountId = blotterFilter.accountId
                 if (accountId != -1L) {
                     // get account type
-                    val account =
-                        db.getAccount(accountId)
-                    val type =
-                        AccountType.valueOf(account.type)
+                    val account = db.getAccount(accountId)
+                    val type = AccountType.valueOf(account.type)
                     val inflater: MenuInflater = requireActivity().menuInflater
                     if (type.isCreditCard) {
                         // Show menu for Credit Cards - bill
@@ -362,62 +469,14 @@ open class BlotterFragment : AbstractListFragment() {
         recreateCursor()
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        blotterFilter.toBundle(outState)
-    }
-
-    override fun recreateCursor() {
-        super.recreateCursor()
-        calculateTotals()
-    }
-
     protected fun createFromTemplate() {
         val intent = Intent(requireActivity(), SelectTemplateActivity::class.java)
         startActivityForResult(intent, NEW_TRANSACTION_FROM_TEMPLATE_REQUEST)
     }
 
-    override fun createContextMenus(id: Long): MutableList<MenuItemInfo> {
-        return if (blotterFilter.isTemplate() || blotterFilter.isSchedule) {
-            super.createContextMenus(id)
-        } else {
-            val menus = super.createContextMenus(id)
-            menus.add(MenuItemInfo(MENU_DUPLICATE, R.string.duplicate))
-            menus.add(MenuItemInfo(MENU_SAVE_AS_TEMPLATE, R.string.save_as_template))
-            menus
-        }
-    }
-
-    override fun onPopupItemSelected(
-        itemId: Int,
-        view: View?,
-        position: Int,
-        id: Long
-    ): Boolean {
-        if (!super.onPopupItemSelected(itemId, view, position, id)) {
-            when (itemId) {
-                MENU_DUPLICATE -> {
-                    duplicateTransaction(id, 1)
-                    return true
-                }
-                MENU_SAVE_AS_TEMPLATE -> {
-                    BlotterOperations(this, db, id, callback).duplicateAsTemplate()
-                    Toast.makeText(
-                        requireContext(),
-                        R.string.save_as_template_success,
-                        Toast.LENGTH_SHORT
-                    )
-                        .show()
-                    return true
-                }
-            }
-        }
-        return false
-    }
-
     private fun duplicateTransaction(id: Long, multiplier: Int): Long {
-        val newId =
-            BlotterOperations(this, db, id, callback).duplicateTransaction(multiplier)
+        val newId = BlotterOperations(this, db, id, callback)
+            .duplicateTransaction(multiplier)
         val toastText: String = if (multiplier > 1) {
             getString(R.string.duplicate_success_with_multiplier, multiplier)
         } else {
@@ -427,14 +486,6 @@ open class BlotterFragment : AbstractListFragment() {
         recreateCursor()
         AccountWidget.updateWidgets(requireContext())
         return newId
-    }
-
-    override fun addItem() {
-        if (showAllBlotterButtons) {
-            addItem(NEW_TRANSACTION_REQUEST, TransactionActivity::class.java)
-        } else {
-            addButtonActionGrid!!.show(bAdd)
-        }
     }
 
     protected fun addItem(
@@ -450,30 +501,6 @@ open class BlotterFragment : AbstractListFragment() {
         startActivityForResult(intent, requestId)
     }
 
-    override fun createCursor(): Cursor {
-        return if (isAccountBlotter) {
-            db.getBlotterForAccount(blotterFilter)
-        } else {
-            db.getBlotter(blotterFilter)
-        }
-    }
-
-    override fun createAdapter(cursor: Cursor?): ListAdapter {
-        return if (isAccountBlotter) {
-            TransactionsListAdapter(requireContext(), db, cursor)
-        } else {
-            BlotterListAdapter(requireContext(), db, cursor)
-        }
-    }
-
-    override fun deleteItem(
-        v: View?,
-        position: Int,
-        id: Long
-    ) {
-        deleteTransaction(id)
-    }
-
     private fun deleteTransaction(id: Long) {
         BlotterOperations(this, db, id, callback).deleteTransaction()
     }
@@ -483,36 +510,8 @@ open class BlotterFragment : AbstractListFragment() {
         AccountWidget.updateWidgets(requireContext())
     }
 
-    override fun editItem(v: View?, position: Int, id: Long) {
-        editTransaction(id)
-    }
-
     private fun editTransaction(id: Long) {
         BlotterOperations(this, db, id, callback).editTransaction()
-    }
-
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent?
-    ) {
-        if (requestCode == FILTER_REQUEST) {
-            if (resultCode == Activity.RESULT_FIRST_USER) {
-                blotterFilter.clear()
-            } else if (resultCode == Activity.RESULT_OK) {
-                blotterFilter = WhereFilter.fromIntent(data)
-            }
-            if (saveFilter) {
-                saveFilter()
-            }
-            applyFilter()
-            recreateCursor()
-        } else if (resultCode == Activity.RESULT_OK && requestCode == NEW_TRANSACTION_FROM_TEMPLATE_REQUEST && data != null) {
-            createTransactionFromTemplate(data)
-        }
-        if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_FIRST_USER) {
-            recreateCursor()
-        }
     }
 
     private fun createTransactionFromTemplate(data: Intent) {
@@ -556,31 +555,9 @@ open class BlotterFragment : AbstractListFragment() {
         FilterState.updateFilterColor(requireContext(), blotterFilter, bFilter)
     }
 
-    override fun onItemClick(v: View?, position: Int, id: Long) {
-        if (MyPreferences.isQuickMenuEnabledForTransaction(requireContext())) {
-            selectedId = id
-            transactionActionGrid?.show(v)
-        } else {
-            showTransactionInfo(id)
-        }
-    }
-
-    override fun viewItem(v: View?, position: Int, id: Long) {
-        showTransactionInfo(id)
-    }
-
     private fun showTransactionInfo(id: Long) {
         val transactionInfoView = TransactionInfoDialog(requireContext(), db, nodeInflater)
         transactionInfoView.show(this, id, callback)
-    }
-
-    override fun integrityCheck() {
-        IntegrityCheckTask(requireActivity()).execute(
-            IntegrityCheckRunningBalance(
-                requireContext(),
-                db
-            )
-        )
     }
 
 //    fun onBackPressed() {
@@ -594,6 +571,8 @@ open class BlotterFragment : AbstractListFragment() {
 //    }
 
     companion object {
+        private const val MENU_DUPLICATE = LAST_MENU_INDEX + 1
+        private const val MENU_SAVE_AS_TEMPLATE = LAST_MENU_INDEX + 2
         const val SAVE_FILTER = "saveFilter"
         const val EXTRA_FILTER_ACCOUNTS = "filterAccounts"
 

@@ -183,7 +183,8 @@ class AccountListFragment : AbstractListFragment() {
     ) {
         val intent = Intent(requireActivity(), clazz)
         intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, accountId)
-        startActivityForResult(intent,
+        startActivityForResult(
+            intent,
             VIEW_ACCOUNT_REQUEST
         )
     }
@@ -248,7 +249,7 @@ class AccountListFragment : AbstractListFragment() {
 
     override fun onPopupItemSelected(
         itemId: Int,
-        view: View?,
+        view: View,
         position: Int,
         id: Long
     ): Boolean {
@@ -270,16 +271,13 @@ class AccountListFragment : AbstractListFragment() {
 
     override fun addItem() {
         val intent = Intent(requireContext(), AccountActivity::class.java)
-        startActivityForResult(intent,
+        startActivityForResult(
+            intent,
             NEW_ACCOUNT_REQUEST
         )
     }
 
-    override fun deleteItem(
-        v: View?,
-        position: Int,
-        id: Long
-    ) {
+    override fun deleteItem(view: View, position: Int, id: Long) {
         Builder(requireContext())
             .setMessage(R.string.delete_account_confirm)
             .setPositiveButton(R.string.yes) { arg0: DialogInterface?, arg1: Int ->
@@ -290,18 +288,15 @@ class AccountListFragment : AbstractListFragment() {
             .show()
     }
 
-    override fun editItem(
-        v: View?,
-        position: Int,
-        id: Long
-    ) {
+    override fun editItem(view: View, position: Int, id: Long) {
         editAccount(id)
     }
 
     private fun editAccount(id: Long) {
         val intent = Intent(requireActivity(), AccountActivity::class.java)
         intent.putExtra(AccountActivity.ACCOUNT_ID_EXTRA, id)
-        startActivityForResult(intent,
+        startActivityForResult(
+            intent,
             EDIT_ACCOUNT_REQUEST
         )
     }
@@ -315,19 +310,11 @@ class AccountListFragment : AbstractListFragment() {
         accountInfoDialog.show()
     }
 
-    override fun onItemClick(
-        v: View?,
-        position: Int,
-        id: Long
-    ) {
+    override fun onItemClick(view: View, position: Int, id: Long) {
         showAccountTransactions(id)
     }
 
-    override fun viewItem(
-        v: View?,
-        position: Int,
-        id: Long
-    ) {
+    override fun viewItem(view: View, position: Int, id: Long) {
         showAccountTransactions(id)
     }
 
@@ -341,7 +328,8 @@ class AccountListFragment : AbstractListFragment() {
             )
                 .toIntent(account.title, intent)
             intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, true)
-            startActivityForResult(intent,
+            startActivityForResult(
+                intent,
                 VIEW_ACCOUNT_REQUEST
             )
         }
@@ -357,7 +345,8 @@ class AccountListFragment : AbstractListFragment() {
     private fun purgeAccount() {
         val intent = Intent(requireActivity(), PurgeAccountActivity::class.java)
         intent.putExtra(PurgeAccountActivity.ACCOUNT_ID, selectedId)
-        startActivityForResult(intent,
+        startActivityForResult(
+            intent,
             PURGE_ACCOUNT_REQUEST
         )
     }
