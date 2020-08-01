@@ -19,7 +19,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
-import android.widget.RelativeLayout
 import android.widget.ResourceCursorAdapter
 import android.widget.TextView
 import androidx.annotation.LayoutRes
@@ -334,26 +333,15 @@ open class BlotterListAdapter @JvmOverloads constructor(
     }
 
     class BlotterViewHolder(view: View) {
-        val layout: RelativeLayout
-        val indicator: TextView
-        val topView: TextView
-        val centerView: TextView
-        val bottomView: TextView
-        val rightCenterView: TextView
-        val rightView: TextView?
-        val iconView: ImageView
-        val checkBox: CheckBox?
+        val layout: ViewGroup = view.findViewById(R.id.layout)
+        val indicator: View = view.findViewById(R.id.indicator)
+        val topView: TextView = view.findViewById(R.id.top)
+        val centerView: TextView = view.findViewById(R.id.center)
+        val bottomView: TextView = view.findViewById(R.id.bottom)
+        val rightCenterView: TextView = view.findViewById(R.id.right_center)
+        val rightView: TextView? = view.findViewById(R.id.right)
+        val iconView: ImageView = view.findViewById(R.id.right_top)
+        val checkBox: CheckBox? = view.findViewById(R.id.cb)
 
-        init {
-            layout = view.findViewById(R.id.layout)
-            indicator = view.findViewById(R.id.indicator)
-            topView = view.findViewById(R.id.top)
-            centerView = view.findViewById(R.id.center)
-            bottomView = view.findViewById(R.id.bottom)
-            rightCenterView = view.findViewById(R.id.right_center)
-            rightView = view.findViewById(R.id.right)
-            iconView = view.findViewById(R.id.right_top)
-            checkBox = view.findViewById(R.id.cb)
-        }
     }
 }

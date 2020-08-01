@@ -8,78 +8,73 @@
   Contributors:
       Denis Solonenko - initial API and implementation
 -->
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/layout"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="2dp"
-    android:paddingTop="2dp">
+    android:paddingTop="2dp"
+    android:paddingStart="0dp"
+    android:paddingEnd="10dp"
+    android:paddingBottom="2dp">
 
-    <TextView
+    <View
         android:id="@+id/indicator"
         android:layout_width="7dp"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/bottom"
-        android:layout_alignParentLeft="true"
-        android:layout_alignTop="@+id/top"
+        android:layout_height="0dp"
         android:layout_centerVertical="true"
-        android:layout_marginRight="6dp"
-        android:background="@color/unreconciled_transaction_color" />
-
-    <ImageView
-        android:id="@+id/right_top"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/top"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignTop="@+id/top"
-        android:adjustViewBounds="false"
-        android:paddingRight="10dp"
-        android:scaleType="fitEnd"
-        android:src="@drawable/ic_blotter_income" />
+        android:background="@color/unreconciled_transaction_color"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:background="#FF0" />
 
     <TextView
         android:id="@+id/top"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/indicator"
         android:maxLines="1"
-        android:text="top"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        app:layout_constraintBottom_toTopOf="@id/center"
+        app:layout_constraintStart_toStartOf="@id/center"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="top" />
 
     <TextView
         android:id="@+id/center"
-        android:layout_width="fill_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/top"
-        android:layout_below="@+id/top"
-        android:layout_toLeftOf="@+id/right_center"
+        android:layout_marginStart="6dp"
         android:ellipsize="end"
         android:maxLines="1"
-        android:text="Center"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        app:layout_constraintBottom_toTopOf="@id/bottom"
+        app:layout_constraintEnd_toStartOf="@+id/right_center"
+        app:layout_constraintStart_toEndOf="@+id/indicator"
+        app:layout_constraintTop_toBottomOf="@id/top"
+        tools:text="Center" />
 
     <TextView
         android:id="@+id/bottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/center"
-        android:layout_below="@id/center"
         android:maxLines="1"
-        android:text="bottom"
-        android:textAppearance="?android:attr/textAppearanceSmall" />
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="@id/center"
+        app:layout_constraintTop_toBottomOf="@id/center"
+        tools:text="bottom" />
 
-    <TextView
-        android:id="@+id/right"
-        style="@style/TextAppearance.BalanceAmount"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBottom="@id/bottom"
-        android:layout_alignParentRight="true"
-        android:maxLines="1"
-        android:paddingRight="10dp"
-        android:text="right" />
+    <ImageView
+        android:id="@+id/right_top"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:adjustViewBounds="false"
+        android:scaleType="fitEnd"
+        android:src="@drawable/ic_blotter_income"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/right_center"
@@ -87,12 +82,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/center"
-        android:layout_alignBottom="@+id/center"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:maxLines="1"
-        android:paddingRight="10dp"
-        android:text="right_center"
-        android:textAppearance="?android:attr/textAppearanceMedium" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        app:layout_constraintBaseline_toBaselineOf="@id/center"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="right_center" />
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/right"
+        style="@style/TextAppearance.BalanceAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        app:layout_constraintBaseline_toBaselineOf="@id/bottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="right" />
+</androidx.constraintlayout.widget.ConstraintLayout>
