@@ -367,6 +367,11 @@ open class BlotterFragment : AbstractListFragment() {
         blotterFilter.toBundle(outState)
     }
 
+    override fun recreateCursor() {
+        super.recreateCursor()
+        calculateTotals()
+    }
+
     protected fun createFromTemplate() {
         val intent = Intent(requireActivity(), SelectTemplateActivity::class.java)
         startActivityForResult(intent, NEW_TRANSACTION_FROM_TEMPLATE_REQUEST)
@@ -506,7 +511,7 @@ open class BlotterFragment : AbstractListFragment() {
             createTransactionFromTemplate(data)
         }
         if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_FIRST_USER) {
-            calculateTotals()
+            recreateCursor()
         }
     }
 

@@ -125,7 +125,7 @@ abstract class AbstractListFragment : Fragment() {
 
     protected open fun addItem() {}
 
-    protected fun recreateCursor() {
+    protected open fun recreateCursor() {
         Log.i("AbstractListFragment", "Recreating cursor")
         val state: Parcelable = listView.onSaveInstanceState()
         try {
