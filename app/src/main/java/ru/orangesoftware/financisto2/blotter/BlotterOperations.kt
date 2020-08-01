@@ -12,6 +12,7 @@ import android.content.Intent
 import androidx.fragment.app.Fragment
 import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.activity.AbstractTransactionActivity
+import ru.orangesoftware.financisto.activity.TransactionActivity
 import ru.orangesoftware.financisto.activity.TransferActivity
 import ru.orangesoftware.financisto.db.DatabaseAdapter
 import ru.orangesoftware.financisto.model.Transaction
@@ -41,7 +42,8 @@ class BlotterOperations(
     }
 
     fun editTransaction() {
-        val intent = getEditTransactionActivityIntent()
+        val isTransfer = targetTransaction.isTransfer
+        val intent = getEditTransactionActivityIntent(isTransfer)
         val requestCode = if (targetTransaction.isTransfer) {
             EDIT_TRANSFER_REQUEST
         } else {
@@ -50,8 +52,11 @@ class BlotterOperations(
         fragment.startActivityForResult(intent, requestCode)
     }
 
-    fun getEditTransactionActivityIntent(): Intent {
-        val intent = Intent(fragment.requireActivity(), TransferActivity::class.java)
+    private fun getEditTransactionActivityIntent(isTransfer: Boolean): Intent {
+        val targetActivity =
+            if (isTransfer) TransferActivity::class.java else TransactionActivity::class.java
+        val intent = Intent(fragment.requireActivity(), targetActivity)
+
         intent.putExtra(AbstractTransactionActivity.TRAN_ID_EXTRA, targetTransaction.id)
         intent.putExtra(AbstractTransactionActivity.DUPLICATE_EXTRA, false)
         intent.putExtra(AbstractTransactionActivity.NEW_FROM_TEMPLATE_EXTRA, newFromTemplate)
