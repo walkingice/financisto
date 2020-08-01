@@ -1,15 +1,4 @@
-/*******************************************************************************
- * Copyright (c) 2010 Denis Solonenko.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the GNU Public License v2.0
- * which accompanies this distribution, and is available at
- * http://www.gnu.org/licenses/old-licenses/gpl-2.0.html
- *
- *
- * Contributors:
- * Denis Solonenko - initial API and implementation
- */
-package ru.orangesoftware.financisto.activity
+package ru.orangesoftware.financisto2.accountlist
 
 import android.app.AlertDialog.Builder
 import android.content.Context
@@ -20,6 +9,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.ImageButton
@@ -28,19 +18,23 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import greendroid.widget.QuickActionGrid
 import greendroid.widget.QuickActionWidget
-import greendroid.widget.QuickActionWidget.OnQuickActionClickListener
+import ru.orangesoftware.financisto2.AbstractListFragment
 import ru.orangesoftware.financisto.R
-import ru.orangesoftware.financisto.R.drawable
-import ru.orangesoftware.financisto.R.id
-import ru.orangesoftware.financisto.R.layout
-import ru.orangesoftware.financisto.R.menu
-import ru.orangesoftware.financisto.R.string
+import ru.orangesoftware.financisto.activity.AbstractTransactionActivity
+import ru.orangesoftware.financisto.activity.AccountActivity
+import ru.orangesoftware.financisto.activity.AccountListTotalsDetailsActivity
+import ru.orangesoftware.financisto.activity.BlotterActivity
+import ru.orangesoftware.financisto.activity.BlotterFilterActivity
+import ru.orangesoftware.financisto.activity.IntegrityCheckTask
+import ru.orangesoftware.financisto.activity.MenuListActivity_
 import ru.orangesoftware.financisto.activity.MenuListItem.MENU_BACKUP
+import ru.orangesoftware.financisto.activity.MyQuickAction
+import ru.orangesoftware.financisto.activity.PurgeAccountActivity
+import ru.orangesoftware.financisto.activity.TransactionActivity
+import ru.orangesoftware.financisto.activity.TransferActivity
 import ru.orangesoftware.financisto.adapter.AccountListAdapter2
 import ru.orangesoftware.financisto.blotter.BlotterFilter
 import ru.orangesoftware.financisto.blotter.TotalCalculationTask
-import ru.orangesoftware.financisto.bus.GreenRobotBus_
-import ru.orangesoftware.financisto.bus.SwitchToMenuTabEvent
 import ru.orangesoftware.financisto.db.DatabaseAdapter
 import ru.orangesoftware.financisto.dialog.AccountInfoDialog
 import ru.orangesoftware.financisto.filter.Criteria
@@ -53,10 +47,22 @@ import ru.orangesoftware.financisto.view.NodeInflater
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit.DAYS
 
-class AccountListActivity : AbstractListActivity(layout.account_list) {
+class AccountListFragment : AbstractListFragment() {
+
+    private lateinit var inflatedView: View
     private var accountActionGrid: QuickActionWidget? = null
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        inflatedView = inflater.inflate(R.layout.fragment_account_list, container, false)
+        return inflatedView
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         setupUi()
         setupMenuButton()
         calculateTotals()
@@ -64,11 +70,11 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
     }
 
     private fun setupUi() {
-        findViewById<View>(id.integrity_error).setOnClickListener { v: View ->
+        inflatedView.findViewById<View>(R.id.integrity_error).setOnClickListener { v: View ->
             v.visibility = View.GONE
         }
         listView.onItemLongClickListener =
-            OnItemLongClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
+            OnItemLongClickListener { _: AdapterView<*>?, view: View?, _: Int, id: Long ->
                 selectedId = id
                 prepareAccountActionGrid()
                 accountActionGrid!!.show(view)
@@ -77,13 +83,12 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
     }
 
     private fun setupMenuButton() {
-        val bMenu = findViewById<ImageButton>(id.bMenu)
-        if (MyPreferences.isShowMenuButtonOnAccountsScreen(this)) {
+        val bMenu = inflatedView.findViewById<ImageButton>(R.id.bMenu)
+        if (MyPreferences.isShowMenuButtonOnAccountsScreen(requireContext())) {
             bMenu.setOnClickListener { v: View? ->
-                val popupMenu =
-                    PopupMenu(this@AccountListActivity, bMenu)
-                val inflater = menuInflater
-                inflater.inflate(menu.account_list_menu, popupMenu.menu)
+                val popupMenu = PopupMenu(requireContext(), bMenu)
+                val inflater = requireActivity().menuInflater
+                inflater.inflate(R.menu.account_list_menu, popupMenu.menu)
                 popupMenu.setOnMenuItemClickListener { item: MenuItem ->
                     handlePopupMenu(item.itemId)
                     true
@@ -97,92 +102,68 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
 
     private fun handlePopupMenu(id: Int) {
         when (id) {
-            R.id.backup -> MENU_BACKUP.call(this)
-            R.id.go_to_menu -> GreenRobotBus_.getInstance_(this).post(SwitchToMenuTabEvent())
+            R.id.backup -> MENU_BACKUP.call(requireActivity())
+            R.id.go_to_menu -> {
+                val intent = Intent(requireContext(), MenuListActivity_::class.java)
+                startActivity(intent)
+            }
         }
     }
 
     protected fun prepareAccountActionGrid() {
         val a = db.getAccount(selectedId)
-        accountActionGrid = QuickActionGrid(this)
+        accountActionGrid = QuickActionGrid(requireContext())
         accountActionGrid?.addQuickAction(
-            MyQuickAction(
-                this,
-                drawable.ic_action_info,
-                string.info
-            )
+            MyQuickAction(requireContext(), R.drawable.ic_action_info, R.string.info)
+        )
+        accountActionGrid?.addQuickAction(
+            MyQuickAction(requireContext(), R.drawable.ic_action_list, R.string.blotter)
+        )
+        accountActionGrid?.addQuickAction(
+            MyQuickAction(requireContext(), R.drawable.ic_action_edit, R.string.edit)
+        )
+        accountActionGrid?.addQuickAction(
+            MyQuickAction(requireContext(), R.drawable.ic_action_add, R.string.transaction)
+        )
+        accountActionGrid?.addQuickAction(
+            MyQuickAction(requireContext(), R.drawable.ic_action_transfer, R.string.transfer)
+        )
+        accountActionGrid?.addQuickAction(
+            MyQuickAction(requireContext(), R.drawable.ic_action_tick, R.string.balance)
         )
         accountActionGrid?.addQuickAction(
             MyQuickAction(
-                this,
-                drawable.ic_action_list,
-                string.blotter
-            )
-        )
-        accountActionGrid?.addQuickAction(
-            MyQuickAction(
-                this,
-                drawable.ic_action_edit,
-                string.edit
-            )
-        )
-        accountActionGrid?.addQuickAction(
-            MyQuickAction(
-                this,
-                drawable.ic_action_add,
-                string.transaction
-            )
-        )
-        accountActionGrid?.addQuickAction(
-            MyQuickAction(
-                this,
-                drawable.ic_action_transfer,
-                string.transfer
-            )
-        )
-        accountActionGrid?.addQuickAction(
-            MyQuickAction(
-                this,
-                drawable.ic_action_tick,
-                string.balance
-            )
-        )
-        accountActionGrid?.addQuickAction(
-            MyQuickAction(
-                this,
-                drawable.ic_action_flash,
-                string.delete_old_transactions
+                requireContext(),
+                R.drawable.ic_action_flash,
+                R.string.delete_old_transactions
             )
         )
         if (a.isActive) {
             accountActionGrid?.addQuickAction(
                 MyQuickAction(
-                    this,
-                    drawable.ic_action_lock_closed,
-                    string.close_account
+                    requireContext(),
+                    R.drawable.ic_action_lock_closed,
+                    R.string.close_account
                 )
             )
         } else {
             accountActionGrid?.addQuickAction(
                 MyQuickAction(
-                    this,
-                    drawable.ic_action_lock_open,
-                    string.reopen_account
+                    requireContext(),
+                    R.drawable.ic_action_lock_open,
+                    R.string.reopen_account
                 )
             )
         }
         accountActionGrid?.addQuickAction(
-            MyQuickAction(
-                this,
-                drawable.ic_action_trash,
-                string.delete_account
-            )
+            MyQuickAction(requireContext(), R.drawable.ic_action_trash, R.string.delete_account)
+
         )
         accountActionGrid?.setOnQuickActionClickListener(accountActionListener)
     }
 
     private val accountActionListener =
-        OnQuickActionClickListener { widget, position ->
+        QuickActionWidget.OnQuickActionClickListener { _, position ->
             when (position) {
                 0 -> showAccountInfo(selectedId)
                 1 -> showAccountTransactions(selectedId)
@@ -200,30 +181,37 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
         accountId: Long,
         clazz: Class<out AbstractTransactionActivity?>
     ) {
-        val intent = Intent(this, clazz)
+        val intent = Intent(requireActivity(), clazz)
         intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, accountId)
-        startActivityForResult(intent, VIEW_ACCOUNT_REQUEST)
+        startActivityForResult(intent,
+            VIEW_ACCOUNT_REQUEST
+        )
     }
 
-    override fun recreateCursor() {
-        super.recreateCursor()
+    override fun onCursorRecreated() {
         calculateTotals()
     }
 
     private var totalCalculationTask: AccountTotalsCalculationTask? = null
+
     private fun calculateTotals() {
         if (totalCalculationTask != null) {
             totalCalculationTask!!.stop()
             totalCalculationTask!!.cancel(true)
         }
-        val totalText = findViewById<TextView>(id.total)
+        val totalText = inflatedView.findViewById<TextView>(R.id.total)
         totalText.setOnClickListener { view: View? -> showTotals() }
-        totalCalculationTask = AccountTotalsCalculationTask(this, db, totalText)
+        totalCalculationTask =
+            AccountTotalsCalculationTask(
+                requireContext(),
+                db,
+                totalText
+            )
         totalCalculationTask!!.execute()
     }
 
     private fun showTotals() {
-        val intent = Intent(this, AccountListTotalsDetailsActivity::class.java)
+        val intent = Intent(requireActivity(), AccountListTotalsDetailsActivity::class.java)
         startActivityForResult(intent, -1)
     }
 
@@ -242,25 +230,25 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
 
     }
 
-    override fun createAdapter(cursor: Cursor): ListAdapter {
-        return AccountListAdapter2(this, cursor)
+    override fun createAdapter(cursor: Cursor?): ListAdapter {
+        return AccountListAdapter2(requireContext(), cursor)
     }
 
     override fun createCursor(): Cursor {
-        return if (MyPreferences.isHideClosedAccounts(this)) {
+        return if (MyPreferences.isHideClosedAccounts(requireContext())) {
             db.allActiveAccounts
         } else {
             db.allAccounts
         }
     }
 
-    override fun createContextMenus(id: Long): List<MenuItemInfo> {
+    override fun createContextMenus(id: Long): MutableList<MenuItemInfo> {
         return ArrayList()
     }
 
     override fun onPopupItemSelected(
         itemId: Int,
-        view: View,
+        view: View?,
         position: Int,
         id: Long
     ): Boolean {
@@ -271,7 +259,7 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
     private fun updateAccountBalance(id: Long): Boolean {
         val a = db.getAccount(id)
         if (a != null) {
-            val intent = Intent(this, TransactionActivity::class.java)
+            val intent = Intent(requireActivity(), TransactionActivity::class.java)
             intent.putExtra(TransactionActivity.ACCOUNT_ID_EXTRA, a.id)
             intent.putExtra(TransactionActivity.CURRENT_BALANCE_EXTRA, a.totalAmount)
             startActivityForResult(intent, 0)
@@ -281,29 +269,29 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
     }
 
     override fun addItem() {
-        val intent = Intent(this@AccountListActivity, AccountActivity::class.java)
-        startActivityForResult(intent, NEW_ACCOUNT_REQUEST)
+        val intent = Intent(requireContext(), AccountActivity::class.java)
+        startActivityForResult(intent,
+            NEW_ACCOUNT_REQUEST
+        )
     }
 
     override fun deleteItem(
-        v: View,
+        v: View?,
         position: Int,
         id: Long
     ) {
-        Builder(this)
-            .setMessage(string.delete_account_confirm)
-            .setPositiveButton(
-                string.yes
-            ) { arg0: DialogInterface?, arg1: Int ->
+        Builder(requireContext())
+            .setMessage(R.string.delete_account_confirm)
+            .setPositiveButton(R.string.yes) { arg0: DialogInterface?, arg1: Int ->
                 db.deleteAccount(id)
                 recreateCursor()
             }
-            .setNegativeButton(string.no, null)
+            .setNegativeButton(R.string.no, null)
             .show()
     }
 
-    public override fun editItem(
-        v: View,
+    override fun editItem(
+        v: View?,
         position: Int,
         id: Long
     ) {
@@ -311,36 +299,32 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
     }
 
     private fun editAccount(id: Long) {
-        val intent = Intent(this@AccountListActivity, AccountActivity::class.java)
+        val intent = Intent(requireActivity(), AccountActivity::class.java)
         intent.putExtra(AccountActivity.ACCOUNT_ID_EXTRA, id)
-        startActivityForResult(intent, EDIT_ACCOUNT_REQUEST)
+        startActivityForResult(intent,
+            EDIT_ACCOUNT_REQUEST
+        )
     }
 
     private var selectedId: Long = -1
     private fun showAccountInfo(id: Long) {
         val layoutInflater =
-            getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+            requireActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         val inflater = NodeInflater(layoutInflater)
-        val accountInfoDialog = AccountInfoDialog(this, id, db, inflater)
+        val accountInfoDialog = AccountInfoDialog(requireActivity(), id, db, inflater)
         accountInfoDialog.show()
     }
 
     override fun onItemClick(
-        v: View,
+        v: View?,
         position: Int,
         id: Long
     ) {
-        if (MyPreferences.isQuickMenuEnabledForAccount(this)) {
-            selectedId = id
-            prepareAccountActionGrid()
-            accountActionGrid!!.show(v)
-        } else {
-            showAccountTransactions(id)
-        }
+        showAccountTransactions(id)
     }
 
     override fun viewItem(
-        v: View,
+        v: View?,
         position: Int,
         id: Long
     ) {
@@ -350,22 +334,20 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
     private fun showAccountTransactions(id: Long) {
         val account = db.getAccount(id)
         if (account != null) {
-            val intent = Intent(this@AccountListActivity, BlotterActivity::class.java)
+            val intent = Intent(requireActivity(), BlotterActivity::class.java)
             Criteria.eq(
                 BlotterFilter.FROM_ACCOUNT_ID,
                 id.toString()
             )
                 .toIntent(account.title, intent)
             intent.putExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, true)
-            startActivityForResult(intent, VIEW_ACCOUNT_REQUEST)
+            startActivityForResult(intent,
+                VIEW_ACCOUNT_REQUEST
+            )
         }
     }
 
-    override fun onActivityResult(
-        requestCode: Int,
-        resultCode: Int,
-        data: Intent
-    ) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == VIEW_ACCOUNT_REQUEST || requestCode == PURGE_ACCOUNT_REQUEST) {
             recreateCursor()
@@ -373,22 +355,22 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
     }
 
     private fun purgeAccount() {
-        val intent = Intent(this, PurgeAccountActivity::class.java)
+        val intent = Intent(requireActivity(), PurgeAccountActivity::class.java)
         intent.putExtra(PurgeAccountActivity.ACCOUNT_ID, selectedId)
-        startActivityForResult(intent, PURGE_ACCOUNT_REQUEST)
+        startActivityForResult(intent,
+            PURGE_ACCOUNT_REQUEST
+        )
     }
 
     private fun closeOrOpenAccount() {
         val a = db.getAccount(selectedId)
         if (a.isActive) {
-            Builder(this)
-                .setMessage(string.close_account_confirm)
-                .setPositiveButton(
-                    string.yes
-                ) { arg0: DialogInterface?, arg1: Int ->
+            Builder(requireContext())
+                .setMessage(R.string.close_account_confirm)
+                .setPositiveButton(R.string.yes) { _: DialogInterface?, _: Int ->
                     flipAccountActive(a)
                 }
-                .setNegativeButton(string.no, null)
+                .setNegativeButton(R.string.no, null)
                 .show()
         } else {
             flipAccountActive(a)
@@ -402,22 +384,20 @@ class AccountListActivity : AbstractListActivity(layout.account_list) {
     }
 
     private fun deleteAccount() {
-        Builder(this)
-            .setMessage(string.delete_account_confirm)
-            .setPositiveButton(
-                string.yes
-            ) { arg0: DialogInterface?, arg1: Int ->
+        Builder(requireContext())
+            .setMessage(R.string.delete_account_confirm)
+            .setPositiveButton(R.string.yes) { arg0: DialogInterface?, arg1: Int ->
                 db.deleteAccount(selectedId)
                 recreateCursor()
             }
-            .setNegativeButton(string.no, null)
+            .setNegativeButton(R.string.no, null)
             .show()
     }
 
     override fun integrityCheck() {
-        IntegrityCheckTask(this).execute(
+        IntegrityCheckTask(requireActivity()).execute(
             IntegrityCheckAutobackup(
-                this,
+                requireContext(),
                 DAYS.toMillis(7)
             )
         )

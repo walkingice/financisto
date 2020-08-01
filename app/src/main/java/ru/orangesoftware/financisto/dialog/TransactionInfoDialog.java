@@ -10,7 +10,6 @@
  ******************************************************************************/
 package ru.orangesoftware.financisto.dialog;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -26,6 +25,7 @@ import android.widget.Toast;
 import java.util.List;
 
 import ru.orangesoftware.financisto.R;
+import ru.orangesoftware.financisto.activity.BlotterActivity;
 import ru.orangesoftware.financisto.activity.BlotterOperations;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.model.Account;
@@ -62,10 +62,10 @@ public class TransactionInfoDialog {
         this.u = new Utils(context);
     }
 
-    public void show(Activity activity, long transactionId, BlotterOperations.DeletionCallback cb) {
+    public void show(BlotterActivity blotterActivity, long transactionId) {
         TransactionInfo ti = db.getTransactionInfo(transactionId);
         if (ti == null) {
-            Toast t = Toast.makeText(activity, R.string.no_transaction_found, Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(blotterActivity, R.string.no_transaction_found, Toast.LENGTH_LONG);
             t.show();
             return;
         }
@@ -79,7 +79,7 @@ public class TransactionInfoDialog {
         createMainInfoNodes(ti, layout);
         createAdditionalInfoNodes(ti, layout);
 
-        showDialog(activity, transactionId, v, titleView, cb);
+        showDialog(blotterActivity, transactionId, v, titleView);
     }
 
     private void createMainInfoNodes(TransactionInfo ti, LinearLayout layout) {
@@ -206,8 +206,8 @@ public class TransactionInfoDialog {
         return titleView;
     }
 
-    private void showDialog(final Activity activity, final long transactionId, final View v, View titleView, BlotterOperations.DeletionCallback cb) {
-        final Dialog d = new AlertDialog.Builder(activity)
+    private void showDialog(final BlotterActivity blotterActivity, final long transactionId, final View v, View titleView) {
+        final Dialog d = new AlertDialog.Builder(blotterActivity)
                 .setCustomTitle(titleView)
                 .setView(v)
                 .create();
@@ -216,7 +216,7 @@ public class TransactionInfoDialog {
         Button bEdit = v.findViewById(R.id.bEdit);
         bEdit.setOnClickListener(arg0 -> {
             d.dismiss();
-            new BlotterOperations(activity, db, transactionId, cb).editTransaction();
+            new BlotterOperations(blotterActivity, db, transactionId).editTransaction();
         });
 
         Button bClose = v.findViewById(R.id.bClose);
@@ -233,7 +233,7 @@ public class TransactionInfoDialog {
     private TextView add(LinearLayout layout, int labelId, String data) {
         View v = inflater.new Builder(layout, R.layout.select_entry_simple).withLabel(labelId)
                 .withData(data).create();
-        return (TextView) v.findViewById(R.id.data);
+        return (TextView)v.findViewById(R.id.data);
     }
 
     private void add(LinearLayout layout, int labelId, String data, String pictureFileName) {

@@ -1,4 +1,4 @@
-package ru.orangesoftware.financisto
+package ru.orangesoftware.financisto2
 
 import android.app.Activity
 import android.content.Intent
@@ -15,6 +15,7 @@ import android.widget.ListAdapter
 import android.widget.ListView
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
+import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.db.DatabaseAdapter
 import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.PinProtection

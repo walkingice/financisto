@@ -1,4 +1,4 @@
-package ru.orangesoftware.financisto.blotter
+package ru.orangesoftware.financisto2.blotter
 
 import android.app.Activity
 import android.app.AlertDialog.Builder
@@ -26,12 +26,10 @@ import android.widget.Toast
 import greendroid.widget.QuickActionGrid
 import greendroid.widget.QuickActionWidget
 import greendroid.widget.QuickActionWidget.OnQuickActionClickListener
-import ru.orangesoftware.financisto.AbstractListFragment
 import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.activity.AbstractTransactionActivity
 import ru.orangesoftware.financisto.activity.AccountWidget
 import ru.orangesoftware.financisto.activity.BlotterFilterActivity
-import ru.orangesoftware.financisto.activity.BlotterOperations
 import ru.orangesoftware.financisto.activity.BlotterTotalsDetailsActivity
 import ru.orangesoftware.financisto.activity.FilterState
 import ru.orangesoftware.financisto.activity.IntegrityCheckTask
@@ -42,23 +40,31 @@ import ru.orangesoftware.financisto.activity.TransactionActivity
 import ru.orangesoftware.financisto.activity.TransferActivity
 import ru.orangesoftware.financisto.adapter.BlotterListAdapter
 import ru.orangesoftware.financisto.adapter.TransactionsListAdapter
-import ru.orangesoftware.financisto.dialog.TransactionInfoDialog
+import ru.orangesoftware.financisto.blotter.AccountTotalCalculationTask
+import ru.orangesoftware.financisto.blotter.BlotterFilter
+import ru.orangesoftware.financisto.blotter.BlotterTotalCalculationTask
+import ru.orangesoftware.financisto.blotter.TotalCalculationTask
+import ru.orangesoftware.financisto2.dialog.TransactionInfoDialog
 import ru.orangesoftware.financisto.filter.WhereFilter
 import ru.orangesoftware.financisto.model.AccountType
 import ru.orangesoftware.financisto.utils.IntegrityCheckRunningBalance
 import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.view.NodeInflater
+import ru.orangesoftware.financisto2.AbstractListFragment
+
+private const val NEW_TRANSACTION_REQUEST = 1
+private const val NEW_TRANSFER_REQUEST = 3
+private const val NEW_TRANSACTION_FROM_TEMPLATE_REQUEST = 5
+private const val MONTHLY_VIEW_REQUEST = 6
+private const val BILL_PREVIEW_REQUEST = 7
+private const val FILTER_REQUEST = 6
 
 open class BlotterFragment : AbstractListFragment() {
 
-    private val NEW_TRANSACTION_REQUEST = 1
-    private val NEW_TRANSFER_REQUEST = 3
-    private val NEW_TRANSACTION_FROM_TEMPLATE_REQUEST = 5
-    private val MONTHLY_VIEW_REQUEST = 6
-    private val BILL_PREVIEW_REQUEST = 7
+    private val inflater: NodeInflater? = null
+    private var selectedId: Long = -1
 
-    protected val FILTER_REQUEST = 6
     private val MENU_DUPLICATE = MENU_ADD + 1
     private val MENU_SAVE_AS_TEMPLATE = MENU_ADD + 2
 
@@ -80,9 +86,10 @@ open class BlotterFragment : AbstractListFragment() {
     protected var isAccountBlotter = false
     protected var showAllBlotterButtons = true
     private lateinit var inflatedView: View
+
     private val callback = object : BlotterOperations.DeletionCallback {
-        override fun onDeleteTransaction(transactionId: Long) {
-            deleteTransaction(transactionId)
+        override fun onDeleteTransactionCompleted(transactionId: Long) {
+            afterDeletingTransaction(transactionId)
         }
     }
 
@@ -113,7 +120,7 @@ open class BlotterFragment : AbstractListFragment() {
 
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
         super.internalOnCreate(inflatedView, savedInstanceState)
-        bFilter = inflatedView.findViewById<ImageButton>(R.id.bFilter)
+        bFilter = inflatedView.findViewById(R.id.bFilter)
         bFilter!!.setOnClickListener { v: View? ->
             val intent = Intent(requireActivity(), BlotterFilterActivity::class.java)
             blotterFilter.toIntent(intent)
@@ -123,7 +130,7 @@ open class BlotterFragment : AbstractListFragment() {
             )
             startActivityForResult(intent, FILTER_REQUEST)
         }
-        totalText = inflatedView.findViewById<TextView>(R.id.total)
+        totalText = inflatedView.findViewById(R.id.total)
         totalText!!.setOnClickListener { view: View? -> showTotals() }
         val intent: Intent = requireActivity().intent
         if (intent != null) {
@@ -379,12 +386,12 @@ open class BlotterFragment : AbstractListFragment() {
         }
 
     private fun clearTransaction(selectedId: Long) {
-        BlotterOperations(requireActivity(), db, selectedId, callback).clearTransaction()
+        BlotterOperations(this, db, selectedId, callback).clearTransaction()
         recreateCursor()
     }
 
     private fun reconcileTransaction(selectedId: Long) {
-        BlotterOperations(requireActivity(), db, selectedId, callback).reconcileTransaction()
+        BlotterOperations(this, db, selectedId, callback).reconcileTransaction()
         recreateCursor()
     }
 
@@ -422,7 +429,7 @@ open class BlotterFragment : AbstractListFragment() {
                     return true
                 }
                 MENU_SAVE_AS_TEMPLATE -> {
-                    BlotterOperations(requireActivity(), db, id, callback).duplicateAsTemplate()
+                    BlotterOperations(this, db, id, callback).duplicateAsTemplate()
                     Toast.makeText(
                         requireContext(),
                         R.string.save_as_template_success,
@@ -438,7 +445,7 @@ open class BlotterFragment : AbstractListFragment() {
 
     private fun duplicateTransaction(id: Long, multiplier: Int): Long {
         val newId =
-            BlotterOperations(requireActivity(), db, id, callback).duplicateTransaction(multiplier)
+            BlotterOperations(this, db, id, callback).duplicateTransaction(multiplier)
         val toastText: String
         toastText = if (multiplier > 1) {
             getString(R.string.duplicate_success_with_multiplier, multiplier)
@@ -497,7 +504,7 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     private fun deleteTransaction(id: Long) {
-        BlotterOperations(requireActivity(), db, id, callback).deleteTransaction()
+        BlotterOperations(this, db, id, callback).deleteTransaction()
     }
 
     fun afterDeletingTransaction(id: Long) {
@@ -510,7 +517,7 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     private fun editTransaction(id: Long) {
-        BlotterOperations(this.requireActivity(), db, id, callback).editTransaction()
+        BlotterOperations(this, db, id, callback).editTransaction()
     }
 
     override fun onActivityResult(
@@ -547,7 +554,7 @@ open class BlotterFragment : AbstractListFragment() {
             val t = db.getTransaction(id)
             if (t.fromAmount == 0L || edit) {
 
-                BlotterOperations(requireActivity(), db, id, callback).asNewFromTemplate()
+                BlotterOperations(this, db, id, callback).asNewFromTemplate()
                     .editTransaction()
             }
         }
@@ -578,9 +585,6 @@ open class BlotterFragment : AbstractListFragment() {
         FilterState.updateFilterColor(requireContext(), blotterFilter, bFilter)
     }
 
-    private val inflater: NodeInflater? = null
-    private var selectedId: Long = -1
-
     override fun onItemClick(v: View?, position: Int, id: Long) {
         if (MyPreferences.isQuickMenuEnabledForTransaction(requireContext())) {
             selectedId = id
@@ -595,8 +599,8 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     private fun showTransactionInfo(id: Long) {
-        val transactionInfoView = TransactionInfoDialog(requireContext(), db, inflater)
-        transactionInfoView.show(this.requireActivity(), id, callback)
+        val transactionInfoView = TransactionInfoDialog(requireContext(), db, inflater!!)
+        transactionInfoView.show(this, id, callback)
     }
 
     override fun integrityCheck() {

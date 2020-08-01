@@ -9,7 +9,7 @@
  * Contributors:
  * Denis Solonenko - initial API and implementation
  */
-package ru.orangesoftware.financisto.activity
+package ru.orangesoftware.financisto2.activity
 
 import android.content.Context
 import android.content.Intent
@@ -30,8 +30,11 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode.MAIN
 import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.R.drawable
-import ru.orangesoftware.financisto.accountlist.AccountListFragment
-import ru.orangesoftware.financisto.blotter.BlotterFragment
+import ru.orangesoftware.financisto2.accountlist.AccountListFragment
+import ru.orangesoftware.financisto.activity.BudgetListActivity
+import ru.orangesoftware.financisto.activity.MenuListActivity_
+import ru.orangesoftware.financisto.activity.ReportsListActivity
+import ru.orangesoftware.financisto2.blotter.BlotterFragment
 import ru.orangesoftware.financisto.bus.GreenRobotBus
 import ru.orangesoftware.financisto.bus.GreenRobotBus_
 import ru.orangesoftware.financisto.bus.RefreshCurrentTab
@@ -57,7 +60,10 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
 
         val tabLayout = findViewById<TabLayout>(R.id.tabs)
         val viewPager = findViewById<ViewPager2>(R.id.fragment_container)
-        val adapter = FragmentStateAdapterImpl(this)
+        val adapter =
+            FragmentStateAdapterImpl(
+                this
+            )
         viewPager.adapter = adapter
         TabLayoutMediator(tabLayout, viewPager, adapter.createStrategy()).attach()
         initialLoad()

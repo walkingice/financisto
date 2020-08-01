@@ -1,4 +1,4 @@
-package ru.orangesoftware.financisto.activity
+package ru.orangesoftware.financisto2.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -20,7 +20,10 @@ abstract class SingleFragmentActivity : AppCompatActivity() {
     private fun setFragment(mainFragment: Fragment) {
         supportFragmentManager
             .beginTransaction()
-            .add(R.id.fragment_container, mainFragment, TAG_MAIN_FRAGMENT)
+            .add(
+                R.id.fragment_container, mainFragment,
+                TAG_MAIN_FRAGMENT
+            )
             .commit()
     }
 
