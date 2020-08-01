@@ -44,7 +44,6 @@ import ru.orangesoftware.financisto.blotter.AccountTotalCalculationTask
 import ru.orangesoftware.financisto.blotter.BlotterFilter
 import ru.orangesoftware.financisto.blotter.BlotterTotalCalculationTask
 import ru.orangesoftware.financisto.blotter.TotalCalculationTask
-import ru.orangesoftware.financisto2.dialog.TransactionInfoDialog
 import ru.orangesoftware.financisto.filter.WhereFilter
 import ru.orangesoftware.financisto.model.AccountType
 import ru.orangesoftware.financisto.utils.IntegrityCheckRunningBalance
@@ -52,6 +51,7 @@ import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.view.NodeInflater
 import ru.orangesoftware.financisto2.AbstractListFragment
+import ru.orangesoftware.financisto2.dialog.TransactionInfoDialog
 
 private const val NEW_TRANSACTION_REQUEST = 1
 private const val NEW_TRANSFER_REQUEST = 3
@@ -133,7 +133,7 @@ open class BlotterFragment : AbstractListFragment() {
         }
         totalText = inflatedView.findViewById(R.id.total)
         totalText!!.setOnClickListener { view: View? -> showTotals() }
-        val intent: Intent = requireActivity().intent
+        val intent: Intent? = requireActivity().intent
         if (intent != null) {
             blotterFilter = WhereFilter.fromIntent(intent)
             saveFilter = intent.getBooleanExtra(SAVE_FILTER, false)
@@ -175,11 +175,7 @@ open class BlotterFragment : AbstractListFragment() {
                     imm.hideSoftInputFromWindow(searchLayout.windowToken, 0)
                 }
             }
-            searchTextClearButton.setOnClickListener { view: View? ->
-                searchText.setText(
-                    ""
-                )
-            }
+            searchTextClearButton.setOnClickListener { searchText.setText("") }
             if (searchLayout.visibility == View.VISIBLE) {
                 imm.hideSoftInputFromWindow(searchLayout.windowToken, 0)
                 searchLayout.visibility = View.GONE
@@ -189,27 +185,15 @@ open class BlotterFragment : AbstractListFragment() {
             searchText.requestFocusFromTouch()
             imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT)
             searchText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(
-                    charSequence: CharSequence,
-                    i: Int,
-                    i1: Int,
-                    i2: Int
-                ) {
-                }
+                override fun beforeTextChanged(c: CharSequence, i1: Int, i2: Int, i3: Int) {}
 
-                override fun onTextChanged(
-                    charSequence: CharSequence,
-                    i: Int,
-                    i1: Int,
-                    i2: Int
-                ) {
-                }
+                override fun onTextChanged(c: CharSequence, i1: Int, i2: Int, i3: Int) {}
 
                 override fun afterTextChanged(editable: Editable) {
                     val clearButton: ImageButton = inflatedView.findViewById(R.id.search_text_clear)
                     val text = editable.toString()
                     blotterFilter.remove(BlotterFilter.NOTE)
-                    if (!text.isEmpty()) {
+                    if (text.isNotEmpty()) {
                         blotterFilter.contains(BlotterFilter.NOTE, text)
                         clearButton.visibility = View.VISIBLE
                     } else {
@@ -223,7 +207,7 @@ open class BlotterFragment : AbstractListFragment() {
             if (blotterFilter[BlotterFilter.NOTE] != null) {
                 var searchFilterText =
                     blotterFilter[BlotterFilter.NOTE].stringValue
-                if (!searchFilterText.isEmpty()) {
+                if (searchFilterText.isNotEmpty()) {
                     searchFilterText = searchFilterText.substring(1, searchFilterText.length - 1)
                     searchText.setText(searchFilterText)
                 }
@@ -306,26 +290,21 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     protected fun prepareTransactionActionGrid() {
-        transactionActionGrid = QuickActionGrid(requireActivity())
-        transactionActionGrid!!.addQuickAction(
-            MyQuickAction(requireContext(), R.drawable.ic_action_info, R.string.info)
-        )
-        transactionActionGrid!!.addQuickAction(
-            MyQuickAction(requireContext(), R.drawable.ic_action_edit, R.string.edit)
-        )
-        transactionActionGrid!!.addQuickAction(
-            MyQuickAction(requireContext(), R.drawable.ic_action_trash, R.string.delete)
-        )
-        transactionActionGrid!!.addQuickAction(
-            MyQuickAction(requireContext(), R.drawable.ic_action_copy, R.string.duplicate)
-        )
-        transactionActionGrid!!.addQuickAction(
-            MyQuickAction(requireContext(), R.drawable.ic_action_tick, R.string.clear)
-        )
-        transactionActionGrid!!.addQuickAction(
-            MyQuickAction(requireContext(), R.drawable.ic_action_double_tick, R.string.reconcile)
-        )
-        transactionActionGrid!!.setOnQuickActionClickListener(transactionActionListener)
+        val grid = QuickActionGrid(requireActivity())
+        val context = requireContext()
+        transactionActionGrid = grid
+        with(grid) {
+            addQuickAction(MyQuickAction(context, R.drawable.ic_action_info, R.string.info))
+            addQuickAction(MyQuickAction(context, R.drawable.ic_action_edit, R.string.edit))
+            addQuickAction(MyQuickAction(context, R.drawable.ic_action_trash, R.string.delete))
+            addQuickAction(MyQuickAction(context, R.drawable.ic_action_copy, R.string.duplicate))
+            addQuickAction(MyQuickAction(context, R.drawable.ic_action_tick, R.string.clear))
+            addQuickAction(
+                MyQuickAction(context, R.drawable.ic_action_double_tick, R.string.reconcile)
+            )
+        }
+
+        grid.setOnQuickActionClickListener(transactionActionListener)
     }
 
     private val transactionActionListener =
@@ -341,33 +320,23 @@ open class BlotterFragment : AbstractListFragment() {
         }
 
     private fun prepareAddButtonActionGrid() {
-        addButtonActionGrid = QuickActionGrid(requireContext())
-        addButtonActionGrid!!.addQuickAction(
-            MyQuickAction(
-                requireContext(),
-                R.drawable.actionbar_add_big,
-                R.string.transaction
-            )
+        val context = requireContext()
+        val grid = QuickActionGrid(context)
+        addButtonActionGrid = grid
+        grid.addQuickAction(
+            MyQuickAction(context, R.drawable.actionbar_add_big, R.string.transaction)
         )
-        addButtonActionGrid!!.addQuickAction(
-            MyQuickAction(
-                requireContext(),
-                R.drawable.ic_action_transfer,
-                R.string.transfer
-            )
+        grid.addQuickAction(
+            MyQuickAction(context, R.drawable.ic_action_transfer, R.string.transfer)
         )
         if (addTemplateToAddButton()) {
-            addButtonActionGrid!!.addQuickAction(
-                MyQuickAction(
-                    requireContext(),
-                    R.drawable.actionbar_tiles_large,
-                    R.string.template
-                )
+            grid.addQuickAction(
+                MyQuickAction(context, R.drawable.actionbar_tiles_large, R.string.template)
             )
         } else {
-            addButtonActionGrid!!.setNumColumns(2)
+            grid.setNumColumns(2)
         }
-        addButtonActionGrid!!.setOnQuickActionClickListener(addButtonActionListener)
+        grid.setOnQuickActionClickListener(addButtonActionListener)
     }
 
     protected fun addTemplateToAddButton(): Boolean {
@@ -377,10 +346,7 @@ open class BlotterFragment : AbstractListFragment() {
     private val addButtonActionListener =
         OnQuickActionClickListener { widget: QuickActionWidget?, position: Int ->
             when (position) {
-                0 -> addItem(
-                    NEW_TRANSACTION_REQUEST,
-                    TransactionActivity::class.java
-                )
+                0 -> addItem(NEW_TRANSACTION_REQUEST, TransactionActivity::class.java)
                 1 -> addItem(NEW_TRANSFER_REQUEST, TransferActivity::class.java)
                 2 -> createFromTemplate()
             }
@@ -447,8 +413,7 @@ open class BlotterFragment : AbstractListFragment() {
     private fun duplicateTransaction(id: Long, multiplier: Int): Long {
         val newId =
             BlotterOperations(this, db, id, callback).duplicateTransaction(multiplier)
-        val toastText: String
-        toastText = if (multiplier > 1) {
+        val toastText: String = if (multiplier > 1) {
             getString(R.string.duplicate_success_with_multiplier, multiplier)
         } else {
             getString(R.string.duplicate_success)
@@ -628,12 +593,8 @@ open class BlotterFragment : AbstractListFragment() {
         const val EXTRA_FILTER_ACCOUNTS = "filterAccounts"
 
         fun newInstance(saveFilter: Boolean): BlotterFragment {
-            val bundle = Bundle().apply {
-                putBoolean(SAVE_FILTER, saveFilter)
-            }
-            return BlotterFragment().apply {
-                arguments = bundle
-            }
+            val bundle = Bundle().apply { putBoolean(SAVE_FILTER, saveFilter) }
+            return BlotterFragment().apply { arguments = bundle }
         }
     }
 }
