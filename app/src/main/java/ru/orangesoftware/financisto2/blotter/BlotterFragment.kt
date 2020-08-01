@@ -69,11 +69,11 @@ open class BlotterFragment : AbstractListFragment() {
     private val MENU_SAVE_AS_TEMPLATE = MENU_ADD + 2
 
     protected var totalText: TextView? = null
-    protected var bFilter: ImageButton? = null
-    protected var bTransfer: ImageButton? = null
-    protected var bTemplate: ImageButton? = null
-    protected var bSearch: ImageButton? = null
-    protected var bMenu: ImageButton? = null
+    protected lateinit var bFilter: ImageButton
+    protected lateinit var bTransfer: ImageButton
+    protected lateinit var bTemplate: ImageButton
+    protected lateinit var bSearch: ImageButton
+    protected lateinit var bMenu: ImageButton
 
     protected var transactionActionGrid: QuickActionGrid? = null
     protected var addButtonActionGrid: QuickActionGrid? = null
@@ -122,7 +122,7 @@ open class BlotterFragment : AbstractListFragment() {
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
         super.internalOnCreate(inflatedView, savedInstanceState)
         bFilter = inflatedView.findViewById(R.id.bFilter)
-        bFilter!!.setOnClickListener { v: View? ->
+        bFilter.setOnClickListener { v: View? ->
             val intent = Intent(requireActivity(), BlotterFilterActivity::class.java)
             blotterFilter.toIntent(intent)
             intent.putExtra(
@@ -150,19 +150,19 @@ open class BlotterFragment : AbstractListFragment() {
             !isAccountBlotter && !MyPreferences.isCollapseBlotterButtons(requireContext())
         if (showAllBlotterButtons) {
             bTransfer = inflatedView.findViewById<ImageButton>(R.id.bTransfer)
-            bTransfer!!.visibility = View.VISIBLE
-            bTransfer!!.setOnClickListener { arg0: View? ->
+            bTransfer.visibility = View.VISIBLE
+            bTransfer.setOnClickListener { arg0: View? ->
                 addItem(
                     NEW_TRANSFER_REQUEST,
                     TransferActivity::class.java
                 )
             }
             bTemplate = inflatedView.findViewById<ImageButton>(R.id.bTemplate)
-            bTemplate!!.visibility = View.VISIBLE
-            bTemplate!!.setOnClickListener { v: View? -> createFromTemplate() }
+            bTemplate.visibility = View.VISIBLE
+            bTemplate.setOnClickListener { v: View? -> createFromTemplate() }
         }
         bSearch = inflatedView.findViewById<ImageButton>(R.id.bSearch)
-        bSearch!!.setOnClickListener { method: View? ->
+        bSearch.setOnClickListener { method: View? ->
             val searchText: EditText = inflatedView.findViewById<EditText>(R.id.search_text)
             val searchLayout: FrameLayout =
                 inflatedView.findViewById<FrameLayout>(R.id.search_text_frame)
@@ -223,7 +223,7 @@ open class BlotterFragment : AbstractListFragment() {
     private fun applyPopupMenu() {
         bMenu = inflatedView.findViewById<ImageButton>(R.id.bMenu)
         if (isAccountBlotter) {
-            bMenu!!.setOnClickListener { v: View? ->
+            bMenu.setOnClickListener { v: View? ->
                 val popupMenu =
                     PopupMenu(requireContext(), bMenu)
                 val accountId = blotterFilter.accountId
@@ -249,7 +249,7 @@ open class BlotterFragment : AbstractListFragment() {
                 }
             }
         } else {
-            bMenu!!.visibility = View.GONE
+            bMenu.visibility = View.GONE
         }
     }
 
@@ -542,7 +542,7 @@ open class BlotterFragment : AbstractListFragment() {
             val a = db.getAccount(accountId)
             bAdd.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
             if (showAllBlotterButtons) {
-                bTransfer!!.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
+                bTransfer.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
             }
         }
         val title = blotterFilter.title
