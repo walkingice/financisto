@@ -259,7 +259,7 @@ class TransactionInfoDialog(
         layout: LinearLayout,
         labelId: Int,
         data: String,
-        pictureFileName: String
+        pictureFileName: String?
     ) {
         val v = inflater.PictureBuilder(layout)
             .withPicture(context, pictureFileName)

@@ -62,7 +62,7 @@ private const val FILTER_REQUEST = 6
 
 open class BlotterFragment : AbstractListFragment() {
 
-    private val inflater: NodeInflater? = null
+    private lateinit var nodeInflater: NodeInflater
     private var selectedId: Long = -1
 
     private val MENU_DUPLICATE = MENU_ADD + 1
@@ -98,6 +98,7 @@ open class BlotterFragment : AbstractListFragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        nodeInflater = NodeInflater(inflater)
         inflatedView = inflater.inflate(R.layout.fragment_blotter, container, false)
         return inflatedView
     }
@@ -599,7 +600,7 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     private fun showTransactionInfo(id: Long) {
-        val transactionInfoView = TransactionInfoDialog(requireContext(), db, inflater!!)
+        val transactionInfoView = TransactionInfoDialog(requireContext(), db, nodeInflater)
         transactionInfoView.show(this, id, callback)
     }
 
