@@ -23,6 +23,7 @@ import android.widget.ListAdapter
 import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
+import androidx.annotation.LayoutRes
 import greendroid.widget.QuickActionGrid
 import greendroid.widget.QuickActionWidget
 import greendroid.widget.QuickActionWidget.OnQuickActionClickListener
@@ -35,7 +36,6 @@ import ru.orangesoftware.financisto.activity.FilterState
 import ru.orangesoftware.financisto.activity.IntegrityCheckTask
 import ru.orangesoftware.financisto.activity.MonthlyViewActivity
 import ru.orangesoftware.financisto.activity.MyQuickAction
-import ru.orangesoftware.financisto.activity.SelectTemplateActivity
 import ru.orangesoftware.financisto.activity.TransactionActivity
 import ru.orangesoftware.financisto.activity.TransferActivity
 import ru.orangesoftware.financisto.adapter.TransactionsListAdapter
@@ -51,6 +51,8 @@ import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.view.NodeInflater
 import ru.orangesoftware.financisto2.AbstractListFragment
 import ru.orangesoftware.financisto2.dialog.TransactionInfoDialog
+import ru.orangesoftware.financisto2.template.SelectTemplateActivity
+import ru.orangesoftware.financisto2.template.SelectTemplateFragment
 
 private const val NEW_TRANSACTION_REQUEST = 1
 private const val NEW_TRANSFER_REQUEST = 3
@@ -95,9 +97,12 @@ open class BlotterFragment : AbstractListFragment() {
         savedInstanceState: Bundle?
     ): View? {
         nodeInflater = NodeInflater(inflater)
-        inflatedView = inflater.inflate(R.layout.fragment_blotter, container, false)
+        inflatedView = inflater.inflate(getLayoutResourceId(), container, false)
         return inflatedView
     }
+
+    @LayoutRes
+    protected open fun getLayoutResourceId(): Int = R.layout.fragment_blotter
 
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
         super.internalOnCreate(inflatedView, savedInstanceState)
@@ -464,7 +469,7 @@ open class BlotterFragment : AbstractListFragment() {
         grid.setOnQuickActionClickListener(addButtonActionListener)
     }
 
-    protected fun addTemplateToAddButton(): Boolean {
+    protected open fun addTemplateToAddButton(): Boolean {
         return true
     }
 
@@ -533,10 +538,10 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     private fun createTransactionFromTemplate(data: Intent) {
-        val templateId = data.getLongExtra(SelectTemplateActivity.TEMPATE_ID, -1)
-        val multiplier = data.getIntExtra(SelectTemplateActivity.MULTIPLIER, 1)
+        val templateId = data.getLongExtra(SelectTemplateFragment.TEMPATE_ID, -1)
+        val multiplier = data.getIntExtra(SelectTemplateFragment.MULTIPLIER, 1)
         val edit =
-            data.getBooleanExtra(SelectTemplateActivity.EDIT_AFTER_CREATION, false)
+            data.getBooleanExtra(SelectTemplateFragment.EDIT_AFTER_CREATION, false)
         if (templateId > 0) {
             val id = duplicateTransaction(templateId, multiplier)
             val t = db.getTransaction(id)
@@ -557,7 +562,7 @@ open class BlotterFragment : AbstractListFragment() {
         val accountId = blotterFilter.accountId
         if (accountId != -1L) {
             val a = db.getAccount(accountId)
-            bAdd.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
+            bAdd?.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
             if (showAllBlotterButtons) {
                 bTransfer?.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
             }
@@ -596,7 +601,7 @@ open class BlotterFragment : AbstractListFragment() {
         const val SAVE_FILTER = "saveFilter"
         const val EXTRA_FILTER_ACCOUNTS = "filterAccounts"
 
-        fun newInstance(saveFilter: Boolean): BlotterFragment {
+        fun newInstance(saveFilter: Boolean = false): BlotterFragment {
             val bundle = Bundle().apply { putBoolean(SAVE_FILTER, saveFilter) }
             return BlotterFragment().apply { arguments = bundle }
         }

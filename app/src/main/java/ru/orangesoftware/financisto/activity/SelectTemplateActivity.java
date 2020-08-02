@@ -68,7 +68,7 @@ public class SelectTemplateActivity extends TemplatesListActivity {
         ib.setOnClickListener(arg0 -> incrementMultiplier());
         ib = findViewById(R.id.bMinus);
         ib.setOnClickListener(arg0 -> decrementMultiplier());
-        
+
         searchFilter = findViewById(R.id.searchFilter);
         searchFilter.addTextChangedListener(new SearchFilterTextWatcherListener(FILTER_DELAY_MILLIS) {
             @Override

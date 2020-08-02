@@ -12,6 +12,8 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.NoActionBar.Bridge" />
 
+    <style name="AppTheme.Dialog" parent="Theme.MaterialComponents.Dialog.Bridge"/>
+
     <style name="CupcakeDialog" parent="android:Theme.Dialog">
         <item name="android:windowAnimationStyle">@null</item>
     </style>

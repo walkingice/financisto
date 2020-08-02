@@ -119,8 +119,8 @@
 
         <service
             android:name=".service.FinancistoService"
-            android:exported="true"
             android:enabled="true"
+            android:exported="true"
             android:permission="android.permission.BIND_JOB_SERVICE">
             <intent-filter>
                 <action android:name=".SCHEDULE_ONE" />
@@ -290,8 +290,7 @@
         <activity
             android:name=".activity.SmsDragListActivity"
             android:label="@string/sms_templates"
-            android:theme="@style/Theme.AppCompat"
-        />
+            android:theme="@style/Theme.AppCompat" />
 
         <activity
             android:name=".activity.DateFilterActivity"
@@ -344,7 +343,7 @@
 
         <activity
             android:name=".activity.ProjectListActivity"
-            android:label="@string/projects"/>
+            android:label="@string/projects" />
 
         <activity
             android:name=".activity.PayeeActivity"
@@ -473,6 +472,18 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="ru.orangesoftware.financisto2.blotter.BlotterActivity"
+            android:label="@string/blotter" />
+
+        <activity
+            android:name="ru.orangesoftware.financisto2.template.TemplatesListActivity"
+            android:label="@string/transaction_templates" />
+
+        <activity
+            android:name="ru.orangesoftware.financisto2.template.SelectTemplateActivity"
+            android:label="@string/transaction_templates"
+            android:theme="@style/AppTheme.Dialog" />
     </application>
 
 </manifest> 
