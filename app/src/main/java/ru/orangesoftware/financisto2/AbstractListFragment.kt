@@ -33,7 +33,7 @@ abstract class AbstractListFragment : Fragment() {
     protected lateinit var cursor: Cursor
     protected lateinit var adapter: ListAdapter
     protected lateinit var listView: ListView
-    protected lateinit var bAdd: ImageButton
+    protected var bAdd: ImageButton? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +71,7 @@ abstract class AbstractListFragment : Fragment() {
 
     protected open fun internalOnCreate(inflatedView: View, savedInstanceState: Bundle?) {
         bAdd = inflatedView.findViewById(R.id.bAdd)
-        bAdd.setOnClickListener { addItem() }
+        bAdd?.setOnClickListener { addItem() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
