@@ -38,12 +38,10 @@ abstract class AbstractListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         db = DatabaseAdapter(requireContext()).also { it.open() }
-        cursor = createCursor()
     }
 
     override fun onDestroy() {
         db.close()
-        cursor.close()
         super.onDestroy()
     }
 
@@ -61,12 +59,18 @@ abstract class AbstractListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         listView = view.findViewById(android.R.id.list)
         internalOnCreate(view, savedInstanceState)
+        cursor = createCursor()
         recreateAdapter(cursor)
         listView.setOnItemLongClickListener { _: AdapterView<*>?, v: View, position: Int, id: Long ->
             onItemLongClick(v, position, id)
             true
         }
         listView.setOnItemClickListener { _, v: View, position, id -> onItemClick(v, position, id) }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        cursor.close()
     }
 
     protected open fun internalOnCreate(inflatedView: View, savedInstanceState: Bundle?) {
