@@ -14,7 +14,6 @@ import android.widget.ListAdapter
 import android.widget.TextView
 import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.activity.MyEntityListActivity
-import ru.orangesoftware.financisto.activity.TemplatesListActivity
 import ru.orangesoftware.financisto.adapter.TemplateListAdapter
 import ru.orangesoftware.financisto.blotter.BlotterFilter
 import ru.orangesoftware.financisto.filter.Criteria
