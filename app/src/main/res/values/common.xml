@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   Copyright (c) 2010 Denis Solonenko.
   All rights reserved. This program and the accompanying materials
   are made available under the terms of the GNU Public License v2.0
@@ -10,242 +9,23 @@
 	  Denis Solonenko - initial API and implementation
 -->
 <resources>
-	<string name="app_name" translatable="false">Financisto</string>
-	<string name="app_description">Open-source personal finance tracker</string>
-	<string name="about_copyright1">Released under GNU GPL v2</string>
-	<color name="scheduled">#7cc623</color>
-	<color name="positive_amount">#66bb6a</color>
-	<color name="negative_amount">#ef5350</color>
-	<color name="transfer_color">@color/holo_orange_dark</color>
-	<color name="future_color">@color/holo_orange_dark</color>
-	<color name="split_color">@color/holo_blue_dark</color>
-	<color name="restored_transaction_color">#df0024</color>	
-	<color name="pending_transaction_color">#303030</color>	
-	<color name="unreconciled_transaction_color">#737373</color>	
-	<color name="reconciled_transaction_color">#006a25</color>	
-	<color name="cleared_transaction_color">#79c471</color>	
-	<color name="category_type_income">#39b54a</color>
-	<color name="category_type_expense">#f26522</color>
-	<color name="bottom_bar_tint">@color/bottom_bar_button_fg_color</color>
-	<dimen name="picker_width">62dp</dimen>
-	<dimen name="calculator_button_width">56dp</dimen>
-	<dimen name="calculator_button_height">56dp</dimen>
-	<dimen name="pin_button_width">70dp</dimen>
-	<dimen name="pin_button_height">70dp</dimen>
-	<dimen name="select_entry_height">51dp</dimen>
-	<dimen name="select_entry_height_no_label">45dp</dimen>
-	<dimen name="title_entry_height">25dp</dimen>
-	<dimen name="amount_picker_width">47dp</dimen>
-	<string-array name="numbers">
-		<item>1</item>
-		<item>2</item>
-		<item>3</item>
-		<item>4</item>
-		<item>5</item>
-		<item>6</item>
-	</string-array>
-	<string-array name="decimals">
-		<!-- <item>3</item> -->
-		<item>2</item>
-		<item>1</item>
-		<item>0</item>		
-	</string-array>
-	<string-array name="decimal_separators">
-		<item>\'.\'</item>
-		<item>\',\'</item>
-		<item>\' \'</item>
-	</string-array>
-	<string-array name="group_separators">
-		<item>\'.\'</item>
-		<item>\',\'</item>
-		<item>\' \'</item>
-		<item>\'\'</item>
-	</string-array>
-	<string-array name="field_separators">
-		<item>\',\'</item>
-		<item>\';\'</item>
-		<item>\'\t\'</item>
-	</string-array>
-	<string-array name="sort_order_entities">
-		<item>1</item>
-		<item>2</item>
-		<item>3</item>		
-		<item>4</item>
-		<item>5</item>
-	</string-array>
-	<string-array name="ui_language_entities">
-		<item>&lt;default&gt;</item>
-        <item>Catalan</item>
-		<item>Čeština</item>
-		<item>Deutsch</item>
-        <item>English</item>
-		<item>Español</item>
-		<item>Français</item>
-        <item>Hungarian</item>
-		<item>Italiano</item>
-        <item>Norwegian</item>
-        <item>Polski</item>
-		<item>Português (Brasil)</item>
-        <item>Português (Portugal)</item>
-        <item>Romanian</item>
-        <item>Slovak</item>
-		<item>Русский</item>
-		<item>Українська</item>
-		<item>Chinese (China)</item>
-		<item>Chinese (Taiwan)</item>
-	</string-array>
-	<string-array name="ui_language_values">
-		<item>default</item>
-        <item>ca</item>
-		<item>cs-CZ</item>
-		<item>de</item>
-        <item>en</item>
-		<item>es</item>
-		<item>fr</item>
-        <item>hu</item>
-		<item>it</item>
-        <item>no-NB</item>
-        <item>pl</item>
-		<item>pt-BR</item>
-        <item>pt-PT</item>
-        <item>ro</item>
-        <item>sk</item>
-		<item>ru</item>
-		<item>uk-UA</item>
-		<item>zh-CN</item>
-		<item>zh-TW</item>
-	</string-array>
-	<string-array name="sort_accounts_values">
-		<item>SORT_ORDER_ASC</item>
-		<item>SORT_ORDER_DESC</item>
-		<item>NAME</item>
-        <item>LAST_TRANSACTION_ASC</item>
-        <item>LAST_TRANSACTION_DESC</item>
-    </string-array>
-	<string-array name="sort_locations_values">
-		<item>NAME</item>
-		<item>FREQUENCY</item>
-	</string-array>
-	<string-array name="sort_templates_values">
-		<item>DATE</item>
-		<item>NAME</item>
-		<item>ACCOUNT</item>
-	</string-array>
-	<string-array name="sort_budgets_values">
-		<item>DATE</item>
-		<item>NAME</item>
-		<item>AMOUNT</item>
-	</string-array>
-	<string-array name="sort_blotter_values">
-		<item>DESC</item>
-		<item>ASC</item>
-	</string-array>
-	<string-array name="report_reference_period_values">
-		<item>3</item>
-		<item>6</item>
-		<item>9</item>
-		<item>12</item>
-	</string-array>
-	<string-array name="report_reference_month_values">
-		<item>-6</item>
-		<item>-3</item>
-		<item>-1</item>
-		<item>0</item>
-		<item>1</item>
-		<item>3</item>
-		<item>6</item>
-	</string-array>
-	<string name="widget_2x1" translatable="false">Financisto 2x1</string>
+    <string name="app_name" translatable="false">Financisto</string>
+    <string name="app_description">Open-source personal finance tracker</string>
+    <string name="about_copyright1">Released under GNU GPL v2</string>
+    <string name="widget_2x1" translatable="false">Financisto 2x1</string>
     <string name="widget_3x1" translatable="false">Financisto 3x1</string>
     <string name="widget_4x1" translatable="false">Financisto 4x1</string>
-	<string name="currency_symbol_hint" translatable="false">$ £ ¥ π</string>
-   	<string name="card_issuer_visa" translatable="false">Visa</string>
-	<string name="card_issuer_electron" translatable="false">Visa Electron</string>
-	<string name="card_issuer_mastercard" translatable="false">Mastercard</string>
-	<string name="card_issuer_maestro" translatable="false">Maestro</string>
-	<string name="card_issuer_amex" translatable="false">AMEX</string>
-	<string name="card_issuer_jcb" translatable="false">JCB</string>
-	<string name="card_issuer_diners" translatable="false">Diners Club</string>
-	<string name="card_issuer_discover" translatable="false">Discover</string>
-	<string name="card_issuer_nets" translatable="false">NETS</string>
-	<string name="recur_rrule" translatable="false">RFC-2445 RRULE</string>
-	<dimen name="category_padding">10dp</dimen>
-    <dimen name="transaction_icon_padding">10dp</dimen>
-
-    <string-array name="lock_time_values">
-        <item>0</item>
-        <item>1</item>
-        <item>3</item>
-        <item>5</item>
-        <item>10</item>
-        <item>15</item>
-    </string-array>
-
-    <string-array name="date_format_values">
-        <item>dd/MM/yyyy</item>
-        <item>MM/dd/yyyy</item>
-        <item>yyyy-MM-dd</item>
-        <item>dd.MM.yyyy</item>
-    </string-array>
-
-    <string-array name="qif_date_format_values">
-        <item>EU (dd/MM/yyyy, dd.MM.yy, ...)</item>
-        <item>US (MM/dd/yyyy, MM.dd.yy, ...)</item>
-    </string-array>
-
-    <string-array name="unsplit_quick_action_items">
-        <item>@string/add_transaction</item>
-        <item>@string/add_transfer</item>
-        <item>@string/unsplit_adjust_amount_summary</item>
-        <item>@string/unsplit_adjust_evenly_summary</item>
-        <item>@string/unsplit_adjust_last_summary</item>
-    </string-array>
-
-    <string-array name="symbol_formats">
-        <item>1 $</item>
-        <item>1$</item>
-        <item>$ 1</item>
-        <item>$1</item>
-    </string-array>
-
-    <dimen name="report_labels_text_size">15sp</dimen>
-    <dimen name="report_legend_text_size">15sp</dimen>
-
-    <string-array name="startup_screen_values">
-        <item>ACCOUNTS</item>
-        <item>BLOTTER</item>
-        <item>BUDGETS</item>
-        <item>REPORTS</item>
-    </string-array>
-
-    <string-array name="exchange_rate_provider_entities">
-        <item>WebserviceX.NET</item>
-        <item>OpenExchangeRates</item>
-        <item>FreeCurrency</item>
-    </string-array>
-
-    <string-array name="exchange_rate_provider_values">
-        <item>webservicex</item>
-        <item>openexchangerates</item>
-        <item>freeCurrency</item>
-    </string-array>
-
-	<string-array name="pref_sms_transaction_statuses">
-		<item>@string/transaction_status_restored</item>
-		<item>@string/transaction_status_pending</item>
-		<item>@string/transaction_status_unreconciled</item>
-		<item>@string/transaction_status_cleared</item>
-		<item>@string/transaction_status_reconciled</item>
-	</string-array>
-
-	<string-array name="pref_sms_transaction_status_values">
-		<item>RS</item>
-		<item>PN</item>
-		<item>UR</item>
-		<item>CL</item>
-		<item>RC</item>
-	</string-array>
-
+    <string name="currency_symbol_hint" translatable="false">$ £ ¥ π</string>
+    <string name="card_issuer_visa" translatable="false">Visa</string>
+    <string name="card_issuer_electron" translatable="false">Visa Electron</string>
+    <string name="card_issuer_mastercard" translatable="false">Mastercard</string>
+    <string name="card_issuer_maestro" translatable="false">Maestro</string>
+    <string name="card_issuer_amex" translatable="false">AMEX</string>
+    <string name="card_issuer_jcb" translatable="false">JCB</string>
+    <string name="card_issuer_diners" translatable="false">Diners Club</string>
+    <string name="card_issuer_discover" translatable="false">Discover</string>
+    <string name="card_issuer_nets" translatable="false">NETS</string>
+    <string name="recur_rrule" translatable="false">RFC-2445 RRULE</string>
     <string name="electronic_type_paypal" translatable="false">PayPal</string>
     <string name="electronic_type_bitcoin" translatable="false">Bitcoin</string>
     <string name="electronic_type_amazon" translatable="false">Amazon</string>
@@ -253,12 +33,8 @@
     <string name="electronic_type_google_wallet" translatable="false">Google Wallet</string>
     <string name="electronic_type_web_money" translatable="false">Web Money</string>
     <string name="electronic_type_yandex_money">Yandex Money</string>
-	<string name="electronic_type_alipay" translatable="false">AliPay</string>
-
-	<string name="card_issuer_unionpay" translatable="false">UnionPay</string>
+    <string name="electronic_type_alipay" translatable="false">AliPay</string>
+    <string name="card_issuer_unionpay" translatable="false">UnionPay</string>
     <string name="card_issuer_cirrus" translatable="false">Cirrus</string>
     <string name="card_issuer_eps" translatable="false">EPS</string>
-
-	<dimen name="list_section_divider_min_height">32dip</dimen>
-
 </resources>
