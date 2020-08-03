@@ -24,6 +24,8 @@ import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.LayoutRes
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import greendroid.widget.QuickActionGrid
 import greendroid.widget.QuickActionWidget
 import greendroid.widget.QuickActionWidget.OnQuickActionClickListener
@@ -67,11 +69,11 @@ open class BlotterFragment : AbstractListFragment() {
     private var selectedId: Long = -1
 
     protected var totalText: TextView? = null
-    protected  var bFilter: ImageButton? = null
-    protected  var bTransfer: ImageButton? = null
-    protected  var bTemplate: ImageButton? = null
-    protected  var bSearch: ImageButton? = null
-    protected  var bMenu: ImageButton? = null
+    protected var bFilter: ImageButton? = null
+    protected var bTransfer: ImageButton? = null
+    protected var bTemplate: ImageButton? = null
+    protected var bSearch: ImageButton? = null
+    protected var bMenu: ImageButton? = null
 
     protected var transactionActionGrid: QuickActionGrid? = null
     protected var addButtonActionGrid: QuickActionGrid? = null
@@ -129,6 +131,7 @@ open class BlotterFragment : AbstractListFragment() {
         showAllBlotterButtons =
             !isAccountBlotter && !MyPreferences.isCollapseBlotterButtons(requireContext())
 
+        initBottomAppBar(view)
         initFilterButton()
         initSearchButton()
         if (showAllBlotterButtons) {
@@ -207,14 +210,6 @@ open class BlotterFragment : AbstractListFragment() {
         }
     }
 
-    override fun addItem() {
-        if (showAllBlotterButtons) {
-            addItem(NEW_TRANSACTION_REQUEST, TransactionActivity::class.java)
-        } else {
-            addButtonActionGrid!!.show(bAdd)
-        }
-    }
-
     override fun createCursor(): Cursor {
         return if (isAccountBlotter) {
             db.getBlotterForAccount(blotterFilter)
@@ -278,106 +273,56 @@ open class BlotterFragment : AbstractListFragment() {
         totalText?.setOnClickListener { view: View? -> showTotals() }
     }
 
-    private fun initFilterButton() {
-        bFilter?.setOnClickListener { v: View? ->
-            val intent = Intent(requireActivity(), BlotterFilterActivity::class.java)
-            blotterFilter.toIntent(intent)
-            intent.putExtra(
-                BlotterFilterActivity.IS_ACCOUNT_FILTER,
-                isAccountBlotter && blotterFilter.accountId > 0
-            )
-            startActivityForResult(intent, FILTER_REQUEST)
+    private fun initBottomAppBar(inflated: View) {
+        val fab = inflated.findViewById<FloatingActionButton>(R.id.fragment_bottom_fab) ?: return
+        fab.setOnClickListener { onTemplateButtonClicked() }
+        val bar = inflated.findViewById<BottomAppBar>(R.id.fragment_bottom_bar) ?: return
+
+        fun menuClickListener(menu: MenuItem): Boolean {
+            when (menu.itemId) {
+                R.id.menu_item_add -> onButtonAddClicked()
+                R.id.menu_item_transfer -> onTransferButtonClicked()
+                R.id.menu_item_template -> onTemplateButtonClicked()
+                R.id.menu_item_search -> onSearchButtonClicked()
+                R.id.menu_item_filter -> onFilterButtonClicked()
+                R.id.menu_item_menu -> onMenuButtonClicked()
+                else -> return false
+            }
+            return true
         }
+        bar.setOnMenuItemClickListener(::menuClickListener)
+    }
+
+    override fun onButtonAddClicked() {
+        if (showAllBlotterButtons) {
+            addItem(NEW_TRANSACTION_REQUEST, TransactionActivity::class.java)
+        } else {
+            addButtonActionGrid!!.show(bAdd)
+        }
+    }
+
+    private fun initFilterButton() {
+        bFilter?.setOnClickListener { onFilterButtonClicked() }
     }
 
     private fun initTransferButton() {
         bTransfer?.visibility = View.VISIBLE
-        bTransfer?.setOnClickListener { addItem(NEW_TRANSFER_REQUEST, TransferActivity::class.java) }
+        bTransfer?.setOnClickListener { onTransferButtonClicked() }
     }
 
     private fun initTemplateButton() {
         bTemplate?.visibility = View.VISIBLE
-        bTemplate?.setOnClickListener { createFromTemplate() }
+        bTemplate?.setOnClickListener { onTemplateButtonClicked() }
     }
 
     private fun initSearchButton() {
-        bSearch?.setOnClickListener { method: View? ->
-            val searchText: EditText = inflatedView.findViewById<EditText>(R.id.search_text)
-            val searchLayout: FrameLayout = inflatedView.findViewById(R.id.search_text_frame)
-            val searchTextClearBtn: ImageButton = inflatedView.findViewById(R.id.search_text_clear)
-            val imm =
-                requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            searchText.onFocusChangeListener = OnFocusChangeListener { view: View, b: Boolean ->
-                if (!view.hasFocus()) {
-                    imm.hideSoftInputFromWindow(searchLayout.windowToken, 0)
-                }
-            }
-            searchTextClearBtn.setOnClickListener { searchText.setText("") }
-            if (searchLayout.visibility == View.VISIBLE) {
-                imm.hideSoftInputFromWindow(searchLayout.windowToken, 0)
-                searchLayout.visibility = View.GONE
-                return@setOnClickListener
-            }
-            searchLayout.visibility = View.VISIBLE
-            searchText.requestFocusFromTouch()
-            imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT)
-            searchText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(c: CharSequence, i1: Int, i2: Int, i3: Int) {}
-
-                override fun onTextChanged(c: CharSequence, i1: Int, i2: Int, i3: Int) {}
-
-                override fun afterTextChanged(editable: Editable) {
-                    val clearButton: ImageButton = inflatedView.findViewById(R.id.search_text_clear)
-                    val text = editable.toString()
-                    blotterFilter.remove(BlotterFilter.NOTE)
-                    if (text.isNotEmpty()) {
-                        blotterFilter.contains(BlotterFilter.NOTE, text)
-                        clearButton.visibility = View.VISIBLE
-                    } else {
-                        clearButton.visibility = View.GONE
-                    }
-                    recreateCursor()
-                    applyFilter()
-                    saveFilter()
-                }
-            })
-            if (blotterFilter[BlotterFilter.NOTE] != null) {
-                var searchFilterText =
-                    blotterFilter[BlotterFilter.NOTE].stringValue
-                if (searchFilterText.isNotEmpty()) {
-                    searchFilterText = searchFilterText.substring(1, searchFilterText.length - 1)
-                    searchText.setText(searchFilterText)
-                }
-            }
-        }
+        bSearch?.setOnClickListener { onSearchButtonClicked() }
     }
 
     private fun applyPopupMenu() {
-        bMenu = inflatedView.findViewById<ImageButton>(R.id.bMenu)
+        bMenu = inflatedView.findViewById(R.id.bMenu)
         if (isAccountBlotter) {
-            bMenu?.setOnClickListener { v: View? ->
-                val popupMenu =
-                    PopupMenu(requireContext(), bMenu)
-                val accountId = blotterFilter.accountId
-                if (accountId != -1L) {
-                    // get account type
-                    val account = db.getAccount(accountId)
-                    val type = AccountType.valueOf(account.type)
-                    val inflater: MenuInflater = requireActivity().menuInflater
-                    if (type.isCreditCard) {
-                        // Show menu for Credit Cards - bill
-                        inflater.inflate(R.menu.ccard_blotter_menu, popupMenu.menu)
-                    } else {
-                        // Show menu for other accounts - monthly view
-                        inflater.inflate(R.menu.blotter_menu, popupMenu.menu)
-                    }
-                    popupMenu.setOnMenuItemClickListener { item: MenuItem ->
-                        onPopupMenuSelected(item.itemId)
-                        true
-                    }
-                    popupMenu.show()
-                }
-            }
+            bMenu?.setOnClickListener { onMenuButtonClicked() }
         } else {
             bMenu?.visibility = View.GONE
         }
@@ -478,7 +423,7 @@ open class BlotterFragment : AbstractListFragment() {
             when (position) {
                 0 -> addItem(NEW_TRANSACTION_REQUEST, TransactionActivity::class.java)
                 1 -> addItem(NEW_TRANSFER_REQUEST, TransferActivity::class.java)
-                2 -> createFromTemplate()
+                2 -> onTemplateButtonClicked()
             }
         }
 
@@ -490,11 +435,6 @@ open class BlotterFragment : AbstractListFragment() {
     private fun reconcileTransaction(selectedId: Long) {
         BlotterOperations(this, db, selectedId, callback).reconcileTransaction()
         recreateCursor()
-    }
-
-    protected fun createFromTemplate() {
-        val intent = Intent(requireActivity(), SelectTemplateActivity::class.java)
-        startActivityForResult(intent, NEW_TRANSACTION_FROM_TEMPLATE_REQUEST)
     }
 
     private fun duplicateTransaction(id: Long, multiplier: Int): Long {
@@ -535,6 +475,98 @@ open class BlotterFragment : AbstractListFragment() {
 
     private fun editTransaction(id: Long) {
         BlotterOperations(this, db, id, callback).editTransaction()
+    }
+
+    protected fun onTemplateButtonClicked() {
+        val intent = Intent(requireActivity(), SelectTemplateActivity::class.java)
+        startActivityForResult(intent, NEW_TRANSACTION_FROM_TEMPLATE_REQUEST)
+    }
+
+    private fun onTransferButtonClicked() {
+        addItem(NEW_TRANSFER_REQUEST, TransferActivity::class.java)
+    }
+
+    private fun onFilterButtonClicked() {
+        val intent = Intent(requireActivity(), BlotterFilterActivity::class.java)
+        blotterFilter.toIntent(intent)
+        intent.putExtra(
+            BlotterFilterActivity.IS_ACCOUNT_FILTER,
+            isAccountBlotter && blotterFilter.accountId > 0
+        )
+        startActivityForResult(intent, FILTER_REQUEST)
+    }
+
+    private fun onSearchButtonClicked() {
+        val searchText: EditText = inflatedView.findViewById<EditText>(R.id.search_text)
+        val searchLayout: FrameLayout = inflatedView.findViewById(R.id.search_text_frame)
+        val searchTextClearBtn: ImageButton = inflatedView.findViewById(R.id.search_text_clear)
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        searchText.onFocusChangeListener = OnFocusChangeListener { view: View, b: Boolean ->
+            if (!view.hasFocus()) {
+                imm.hideSoftInputFromWindow(searchLayout.windowToken, 0)
+            }
+        }
+        searchTextClearBtn.setOnClickListener { searchText.setText("") }
+        if (searchLayout.visibility == View.VISIBLE) {
+            imm.hideSoftInputFromWindow(searchLayout.windowToken, 0)
+            searchLayout.visibility = View.GONE
+            return
+        }
+        searchLayout.visibility = View.VISIBLE
+        searchText.requestFocusFromTouch()
+        imm.showSoftInput(searchText, InputMethodManager.SHOW_IMPLICIT)
+        searchText.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(c: CharSequence, i1: Int, i2: Int, i3: Int) {}
+
+            override fun onTextChanged(c: CharSequence, i1: Int, i2: Int, i3: Int) {}
+
+            override fun afterTextChanged(editable: Editable) {
+                val clearButton: ImageButton = inflatedView.findViewById(R.id.search_text_clear)
+                val text = editable.toString()
+                blotterFilter.remove(BlotterFilter.NOTE)
+                if (text.isNotEmpty()) {
+                    blotterFilter.contains(BlotterFilter.NOTE, text)
+                    clearButton.visibility = View.VISIBLE
+                } else {
+                    clearButton.visibility = View.GONE
+                }
+                recreateCursor()
+                applyFilter()
+                saveFilter()
+            }
+        })
+        if (blotterFilter[BlotterFilter.NOTE] != null) {
+            var searchFilterText =
+                blotterFilter[BlotterFilter.NOTE].stringValue
+            if (searchFilterText.isNotEmpty()) {
+                searchFilterText = searchFilterText.substring(1, searchFilterText.length - 1)
+                searchText.setText(searchFilterText)
+            }
+        }
+    }
+
+    private fun onMenuButtonClicked() {
+        val popupMenu = PopupMenu(requireContext(), bMenu)
+        val accountId = blotterFilter.accountId
+        if (accountId != -1L) {
+            // get account type
+            val account = db.getAccount(accountId)
+            val type = AccountType.valueOf(account.type)
+            val inflater: MenuInflater = requireActivity().menuInflater
+            if (type.isCreditCard) {
+                // Show menu for Credit Cards - bill
+                inflater.inflate(R.menu.ccard_blotter_menu, popupMenu.menu)
+            } else {
+                // Show menu for other accounts - monthly view
+                inflater.inflate(R.menu.blotter_menu, popupMenu.menu)
+            }
+            popupMenu.setOnMenuItemClickListener { item: MenuItem ->
+                onPopupMenuSelected(item.itemId)
+                true
+            }
+            popupMenu.show()
+        }
     }
 
     private fun createTransactionFromTemplate(data: Intent) {

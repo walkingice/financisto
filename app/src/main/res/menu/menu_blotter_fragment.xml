@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_item_add"
+        android:icon="@drawable/actionbar_add_big"
+        android:title="Add"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_item_transfer"
+        android:icon="@drawable/actionbar_transfer"
+        android:title="Transaction"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_item_template"
+        android:icon="@drawable/actionbar_tiles_large"
+        android:title="Template"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_item_search"
+        android:icon="@android:drawable/ic_menu_search"
+        android:title="Search"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/menu_item_filter"
+        android:icon="@drawable/actionbar_filter"
+        android:title="Filter"
+        app:showAsAction="ifRoom" />
+    o
+    <item
+        android:id="@+id/menu_item_menu"
+        android:icon="@drawable/actionbar_dot_menu"
+        android:title="Menu"
+        app:showAsAction="ifRoom" />
+</menu>

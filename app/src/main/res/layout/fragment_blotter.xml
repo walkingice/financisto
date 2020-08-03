@@ -8,93 +8,126 @@
   Contributors:
       Denis Solonenko - initial API and implementation
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <ListView
-        android:id="@android:id/list"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:cacheColorHint="@android:color/transparent"
-        android:fastScrollEnabled="true" />
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:paddingBottom="56dp">
 
-    <FrameLayout
-        android:id="@+id/search_text_frame"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:padding="5dp"
-        android:visibility="gone">
-
-        <EditText
-            android:id="@+id/search_text"
+        <ListView
+            android:id="@android:id/list"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:autofillHints=""
-            android:inputType="text"
-            android:maxLines="1" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:cacheColorHint="@android:color/transparent"
+            android:fastScrollEnabled="true" />
 
-        <ImageButton
-            android:id="@+id/search_text_clear"
-            android:layout_width="wrap_content"
+        <FrameLayout
+            android:id="@+id/search_text_frame"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="10dp"
-            android:background="@android:drawable/ic_delete"
-            android:visibility="gone" />
-    </FrameLayout>
+            android:layout_marginTop="5dp"
+            android:padding="5dp"
+            android:visibility="gone">
 
-    <TextView
-        android:id="@+id/integrity_error"
+            <EditText
+                android:id="@+id/search_text"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:autofillHints=""
+                android:inputType="text"
+                android:maxLines="1" />
+
+            <ImageButton
+                android:id="@+id/search_text_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="10dp"
+                android:background="@android:drawable/ic_delete"
+                android:visibility="gone" />
+        </FrameLayout>
+
+        <TextView
+            android:id="@+id/integrity_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FF0000"
+            android:gravity="center"
+            android:padding="3dp"
+            android:text="@string/integrity_error"
+            android:textColor="#FFFFFF"
+            android:visibility="gone" />
+
+        <LinearLayout style="@style/BottomBar">
+
+            <ImageButton
+                android:id="@+id/bAdd"
+                style="@style/BottomBarButton"
+                android:src="@drawable/actionbar_add_big"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/bTransfer"
+                style="@style/BottomBarButton"
+                android:src="@drawable/actionbar_transfer"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/bTemplate"
+                style="@style/BottomBarButton"
+                android:src="@drawable/actionbar_tiles_large"
+                android:visibility="gone"
+                tools:visibility="visible" />
+
+            <ImageButton
+                android:id="@+id/bSearch"
+                style="@style/BottomBarButton"
+                android:src="@android:drawable/ic_menu_search"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/bFilter"
+                style="@style/BottomBarButton"
+                android:src="@drawable/actionbar_filter"
+                android:visibility="gone" />
+
+            <ImageButton
+                android:id="@+id/bMenu"
+                style="@style/BottomBarButton"
+                android:src="@drawable/actionbar_dot_menu"
+                android:visibility="gone" />
+
+            <include layout="@layout/total_text" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/fragment_bottom_bar"
+        style="@style/Widget.MaterialComponents.BottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FF0000"
-        android:gravity="center"
-        android:padding="3dp"
-        android:text="@string/integrity_error"
-        android:textColor="#FFFFFF"
-        android:visibility="gone" />
+        android:layout_gravity="bottom"
+        android:foregroundTint="@color/white"
+        app:hideOnScroll="true"
+        app:menu="@menu/menu_blotter_fragment" />
 
-    <LinearLayout style="@style/BottomBar">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fragment_bottom_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/colorPrimaryDark"
+        app:borderWidth="0dp"
+        app:layout_anchor="@id/fragment_bottom_bar"
+        app:srcCompat="@drawable/actionbar_tiles_large" />
 
-        <ImageButton
-            android:id="@+id/bAdd"
-            style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_add_big" />
-
-        <ImageButton
-            android:id="@+id/bTransfer"
-            style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_transfer"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <ImageButton
-            android:id="@+id/bTemplate"
-            style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_tiles_large"
-            android:visibility="gone"
-            tools:visibility="visible" />
-
-        <ImageButton
-            android:id="@+id/bSearch"
-            style="@style/BottomBarButton"
-            android:src="@android:drawable/ic_menu_search" />
-
-        <ImageButton
-            android:id="@+id/bFilter"
-            style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_filter" />
-
-        <ImageButton
-            android:id="@+id/bMenu"
-            style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_dot_menu" />
-
-        <include layout="@layout/total_text" />
-    </LinearLayout>
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

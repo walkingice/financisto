@@ -75,7 +75,7 @@ abstract class AbstractListFragment : Fragment() {
 
     protected open fun internalOnCreate(inflatedView: View, savedInstanceState: Bundle?) {
         bAdd = inflatedView.findViewById(R.id.bAdd)
-        bAdd?.setOnClickListener { addItem() }
+        bAdd?.setOnClickListener { onButtonAddClicked() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -119,7 +119,7 @@ abstract class AbstractListFragment : Fragment() {
         popupMenu.show()
     }
 
-    protected open fun addItem() {}
+    protected open fun onButtonAddClicked() {}
 
     protected open fun recreateCursor() {
         Log.i("AbstractListFragment", "Recreating cursor")

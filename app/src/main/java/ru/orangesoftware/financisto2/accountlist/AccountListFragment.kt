@@ -269,7 +269,7 @@ class AccountListFragment : AbstractListFragment() {
         return false
     }
 
-    override fun addItem() {
+    override fun onButtonAddClicked() {
         val intent = Intent(requireContext(), AccountActivity::class.java)
         startActivityForResult(
             intent,
