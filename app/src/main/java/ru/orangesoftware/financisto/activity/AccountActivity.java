@@ -121,7 +121,7 @@ public class AccountActivity extends AbstractActivity {
         accountTypeAdapter = new EntityEnumAdapter<>(this, AccountType.values(), false);
         accountTypeNode = x.addListNodeIcon(layout, R.id.account_type, R.string.account_type, R.string.account_type);
         ImageView icon = accountTypeNode.findViewById(R.id.icon);
-        icon.setColorFilter(ContextCompat.getColor(this, R.color.holo_gray_light));
+        icon.setColorFilter(ContextCompat.getColor(this, R.color.gray_light));
 
         cardIssuerAdapter = new EntityEnumAdapter<>(this, CardIssuer.values(), false);
         cardIssuerNode = x.addListNodeIcon(layout, R.id.card_issuer, R.string.card_issuer, R.string.card_issuer);

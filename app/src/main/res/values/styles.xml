@@ -21,7 +21,7 @@
     </style>
 
     <style name="TextAppearance.ZeroAmount">
-        <item name="android:textColor">@color/holo_gray_bright</item>
+        <item name="android:textColor">@color/gray_bright</item>
     </style>
 
     <style name="TextAppearance.PositiveAmount" parent="android:TextAppearance.Small">
@@ -144,7 +144,7 @@
     <style name="BottomBar">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:background">@color/holo_gray_dark</item>
+        <item name="android:background">@color/gray_dark</item>
         <item name="android:minHeight">@dimen/action_button_size</item>
     </style>
 
@@ -163,7 +163,7 @@
     </style>
 
     <style name="AccountTypeImage">
-        <item name="android:tint">@color/holo_gray_light</item>
+        <item name="android:tint">@color/gray_light</item>
     </style>
 
     <style name="ContactListSeparatorTextViewStyle">

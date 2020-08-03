@@ -55,11 +55,11 @@ public class IntegrityCheckTask extends AsyncTask<IntegrityCheck, Void, Integrit
     private int colorForLevel(IntegrityCheck.Level level) {
         switch (level) {
             case INFO:
-                return R.color.holo_green_dark;
+                return R.color.colorPrimary;
             case WARN:
-                return R.color.holo_orange_dark;
+                return R.color.colorPrimaryDark;
             default:
-                return R.color.holo_red_dark;
+                return R.color.colorAccent;
         }
     }
 

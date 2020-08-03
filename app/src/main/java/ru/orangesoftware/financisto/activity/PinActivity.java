@@ -75,11 +75,11 @@ public class PinActivity extends Activity implements PinView.PinListener {
                 result -> {
                     switch (result.getResult()) {
                         case AUTHENTICATED:
-                            setFingerprintStatus(R.string.fingerprint_auth_success, R.drawable.ic_check_circle_black_48dp, R.color.material_teal);
+                            setFingerprintStatus(R.string.fingerprint_auth_success, R.drawable.ic_check_circle_black_48dp, R.color.colorPrimary);
                             handler.postDelayed(() -> onSuccess(null), 200);
                             break;
                         case FAILED:
-                            setFingerprintStatus(R.string.fingerprint_auth_failed, R.drawable.ic_error_black_48dp, R.color.material_orange);
+                            setFingerprintStatus(R.string.fingerprint_auth_failed, R.drawable.ic_error_black_48dp, R.color.colorPrimary);
                             break;
                         case HELP:
                             Toast.makeText(this, result.getMessage(), Toast.LENGTH_LONG).show();
@@ -87,7 +87,7 @@ public class PinActivity extends Activity implements PinView.PinListener {
                     }
                 },
                 throwable -> {
-                    setFingerprintStatus(R.string.fingerprint_error, R.drawable.ic_error_black_48dp, R.color.holo_red_dark);
+                    setFingerprintStatus(R.string.fingerprint_error, R.drawable.ic_error_black_48dp, R.color.colorPrimary);
                     Toast.makeText(this, throwable.getMessage(), Toast.LENGTH_LONG).show();
                 }
         );
