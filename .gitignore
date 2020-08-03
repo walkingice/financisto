@@ -8,3 +8,6 @@
 /gen
 *.apk
 _prepare_dropbox_keys.sh
+
+*.keystore
+app/google-services.json

@@ -11,6 +11,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('../financisto_debug.keystore')
+            storePassword 'android'
+            keyAlias 'financistodebug'
+            keyPassword 'android'
+        }
+    }
     compileSdkVersion 28
     buildToolsVersion '28.0.3'
 
@@ -35,11 +43,13 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig null
         }
 
         debug {
             applicationIdSuffix ".debug"
             versionNameSuffix applicationIdSuffix
+            signingConfig signingConfigs.debug
         }
     }
 
