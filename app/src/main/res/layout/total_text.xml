@@ -17,7 +17,7 @@
               android:layout_height="fill_parent"
               android:layout_width="wrap_content"
               android:padding="10dp"
-              android:gravity="right|center"
+              android:gravity="end|center"
               android:textStyle="bold"
               android:clickable="true"
               android:layout_margin="4dp"/>

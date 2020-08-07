@@ -66,7 +66,9 @@
             android:textColor="#FFFFFF"
             android:visibility="gone" />
 
-        <LinearLayout style="@style/BottomBar">
+        <LinearLayout
+            style="@style/BottomBar"
+            android:visibility="gone">
 
             <ImageButton
                 android:id="@+id/bAdd"
@@ -79,8 +81,6 @@
                 style="@style/BottomBarButton"
                 android:src="@drawable/actionbar_dot_menu"
                 android:visibility="gone" />
-
-            <include layout="@layout/total_text" />
         </LinearLayout>
 
     </LinearLayout>
@@ -93,7 +93,11 @@
         android:layout_gravity="bottom"
         android:foregroundTint="@color/white"
         app:hideOnScroll="true"
-        app:menu="@menu/menu_blotter_fragment" />
+        app:menu="@menu/menu_blotter_fragment">
+
+        <include layout="@layout/total_text" />
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fragment_bottom_fab"
