@@ -75,32 +75,6 @@
                 android:visibility="gone" />
 
             <ImageButton
-                android:id="@+id/bTransfer"
-                style="@style/BottomBarButton"
-                android:src="@drawable/actionbar_transfer"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <ImageButton
-                android:id="@+id/bTemplate"
-                style="@style/BottomBarButton"
-                android:src="@drawable/actionbar_tiles_large"
-                android:visibility="gone"
-                tools:visibility="visible" />
-
-            <ImageButton
-                android:id="@+id/bSearch"
-                style="@style/BottomBarButton"
-                android:src="@android:drawable/ic_menu_search"
-                android:visibility="gone" />
-
-            <ImageButton
-                android:id="@+id/bFilter"
-                style="@style/BottomBarButton"
-                android:src="@drawable/actionbar_filter"
-                android:visibility="gone" />
-
-            <ImageButton
                 android:id="@+id/bMenu"
                 style="@style/BottomBarButton"
                 android:src="@drawable/actionbar_dot_menu"

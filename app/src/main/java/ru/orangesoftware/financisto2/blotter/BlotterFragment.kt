@@ -69,10 +69,6 @@ open class BlotterFragment : AbstractListFragment() {
     private var selectedId: Long = -1
 
     protected var totalText: TextView? = null
-    protected var bFilter: ImageButton? = null
-    protected var bTransfer: ImageButton? = null
-    protected var bTemplate: ImageButton? = null
-    protected var bSearch: ImageButton? = null
     protected var bMenu: ImageButton? = null
 
     protected var transactionActionGrid: QuickActionGrid? = null
@@ -108,10 +104,6 @@ open class BlotterFragment : AbstractListFragment() {
 
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
         super.internalOnCreate(inflatedView, savedInstanceState)
-        bFilter = inflatedView.findViewById(R.id.bFilter)
-        bSearch = inflatedView.findViewById(R.id.bSearch)
-        bTransfer = inflatedView.findViewById(R.id.bTransfer)
-        bTemplate = inflatedView.findViewById(R.id.bTemplate)
         totalText = inflatedView.findViewById(R.id.total)
 
         activity?.intent?.let { intent ->
@@ -132,12 +124,6 @@ open class BlotterFragment : AbstractListFragment() {
             !isAccountBlotter && !MyPreferences.isCollapseBlotterButtons(requireContext())
 
         initBottomAppBar(view)
-        initFilterButton()
-        initSearchButton()
-        if (showAllBlotterButtons) {
-            initTransferButton()
-            initTemplateButton()
-        }
         initTotalText()
 
         applyFilter()
@@ -278,6 +264,11 @@ open class BlotterFragment : AbstractListFragment() {
         fab.setOnClickListener { onTemplateButtonClicked() }
         val bar = inflated.findViewById<BottomAppBar>(R.id.fragment_bottom_bar) ?: return
 
+        with(bar.menu) {
+            findItem(R.id.menu_item_menu).isVisible = isAccountBlotter
+            findItem(R.id.menu_item_transfer).isVisible = showAllBlotterButtons
+        }
+
         fun menuClickListener(menu: MenuItem): Boolean {
             when (menu.itemId) {
                 R.id.menu_item_add -> onButtonAddClicked()
@@ -299,24 +290,6 @@ open class BlotterFragment : AbstractListFragment() {
         } else {
             addButtonActionGrid!!.show(bAdd)
         }
-    }
-
-    private fun initFilterButton() {
-        bFilter?.setOnClickListener { onFilterButtonClicked() }
-    }
-
-    private fun initTransferButton() {
-        bTransfer?.visibility = View.VISIBLE
-        bTransfer?.setOnClickListener { onTransferButtonClicked() }
-    }
-
-    private fun initTemplateButton() {
-        bTemplate?.visibility = View.VISIBLE
-        bTemplate?.setOnClickListener { onTemplateButtonClicked() }
-    }
-
-    private fun initSearchButton() {
-        bSearch?.setOnClickListener { onSearchButtonClicked() }
     }
 
     private fun applyPopupMenu() {
@@ -596,7 +569,7 @@ open class BlotterFragment : AbstractListFragment() {
             val a = db.getAccount(accountId)
             bAdd?.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
             if (showAllBlotterButtons) {
-                bTransfer?.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
+//                bTransfer?.visibility = if (a != null && a.isActive) View.VISIBLE else View.GONE
             }
         }
         val title = blotterFilter.title
@@ -607,9 +580,9 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     protected fun updateFilterImage() {
-        if (bFilter != null) {
-            FilterState.updateFilterColor(requireContext(), blotterFilter, bFilter)
-        }
+//        if (bFilter != null) {
+//            FilterState.updateFilterColor(requireContext(), blotterFilter, bFilter)
+//        }
     }
 
     private fun showTransactionInfo(id: Long) {

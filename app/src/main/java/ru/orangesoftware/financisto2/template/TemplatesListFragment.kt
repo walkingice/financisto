@@ -37,9 +37,9 @@ open class TemplatesListFragment : BlotterFragment() {
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
         super.internalOnCreate(view, savedInstanceState)
         // remove filter button and totals
-        bFilter?.visibility = View.GONE
+//        bFilter?.visibility = View.GONE
         if (showAllBlotterButtons) {
-            bTemplate?.visibility = View.GONE
+//            bTemplate?.visibility = View.GONE
         }
         totalText?.visibility = View.GONE
         internalOnCreateTemplates(view)
