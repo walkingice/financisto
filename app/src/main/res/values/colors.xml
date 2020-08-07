@@ -9,6 +9,7 @@
     <color name="gray_dark">@color/gray_800</color>
     <color name="green_dark">@color/green_700</color>
 
+    <color name="dialog_background">@color/gray_800</color>
     <color name="calculator_background">#424242</color>
 
     <color name="bottom_bar_button_fg_color">#FFFFFF</color>
