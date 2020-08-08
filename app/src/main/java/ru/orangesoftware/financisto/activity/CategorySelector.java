@@ -342,7 +342,7 @@ public class CategorySelector<A extends AbstractActivity> {
         layout.addView(attributesLayout, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.FILL_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
     }
 
-    protected List<TransactionAttribute> getAttributes() {
+    public List<TransactionAttribute> getAttributes() {
         List<TransactionAttribute> list = new LinkedList<TransactionAttribute>();
         long count = attributesLayout.getChildCount();
         for (int i = 0; i < count; i++) {

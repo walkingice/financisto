@@ -11,9 +11,9 @@ import android.app.AlertDialog
 import android.content.Intent
 import androidx.fragment.app.Fragment
 import ru.orangesoftware.financisto.R
-import ru.orangesoftware.financisto.activity.AbstractTransactionActivity
-import ru.orangesoftware.financisto.activity.TransactionActivity
-import ru.orangesoftware.financisto.activity.TransferActivity
+import ru.orangesoftware.financisto2.transaction.AbstractTransactionActivity
+import ru.orangesoftware.financisto2.transaction.TransactionActivity
+import ru.orangesoftware.financisto2.transaction.TransferActivity
 import ru.orangesoftware.financisto.db.DatabaseAdapter
 import ru.orangesoftware.financisto.model.Transaction
 import ru.orangesoftware.financisto.model.TransactionStatus

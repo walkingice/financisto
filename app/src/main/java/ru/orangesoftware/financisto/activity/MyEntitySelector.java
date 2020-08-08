@@ -357,7 +357,7 @@ public abstract class MyEntitySelector<T extends MyEntity, A extends AbstractAct
         }
     }
 
-    void createNewEntity() {
+    public void createNewEntity() {
         if (filterNode != null && filterNode.isFilterOn() && selectedEntityId == 0) {
             String filterText = autoCompleteView.getText().toString();
             T e = em.findOrInsertEntityByTitle(entityClass, filterText);

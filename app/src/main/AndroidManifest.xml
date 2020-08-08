@@ -154,6 +154,36 @@
         </activity>
 
         <activity
+            android:name="ru.orangesoftware.financisto2.transaction.TransactionActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:icon="@drawable/icon_transaction"
+            android:label="@string/transaction"
+            android:taskAffinity=".TransactionActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name=".NEW_TRANSACTION" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name="ru.orangesoftware.financisto2.transaction.TransferActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:icon="@drawable/icon_transfer"
+            android:label="@string/transfer"
+            android:taskAffinity=".TransferActivity"
+            android:windowSoftInputMode="stateAlwaysHidden|adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name=".NEW_TRANSFER" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
             android:name=".activity.TransactionActivity"
             android:configChanges="orientation|screenSize|keyboardHidden"
             android:icon="@drawable/icon_transaction"
