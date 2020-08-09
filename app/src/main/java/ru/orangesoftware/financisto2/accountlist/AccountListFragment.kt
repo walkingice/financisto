@@ -105,7 +105,7 @@ class AccountListFragment : AbstractListFragment() {
 
     private fun handlePopupMenu(id: Int) {
         when (id) {
-            R.id.backup -> MENU_BACKUP.call(requireActivity())
+//            R.id.backup -> MENU_BACKUP.call(requireActivity())
             R.id.go_to_menu -> {
                 val intent = Intent(requireContext(), MenuListActivity_::class.java)
                 startActivity(intent)
