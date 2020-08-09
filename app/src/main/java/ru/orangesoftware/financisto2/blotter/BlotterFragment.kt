@@ -45,6 +45,7 @@ import ru.orangesoftware.financisto.blotter.AccountTotalCalculationTask
 import ru.orangesoftware.financisto.blotter.BlotterFilter
 import ru.orangesoftware.financisto.blotter.BlotterTotalCalculationTask
 import ru.orangesoftware.financisto.blotter.TotalCalculationTask
+import ru.orangesoftware.financisto.db.DatabaseAdapter
 import ru.orangesoftware.financisto.filter.WhereFilter
 import ru.orangesoftware.financisto.model.AccountType
 import ru.orangesoftware.financisto.utils.IntegrityCheckRunningBalance
@@ -52,6 +53,7 @@ import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.view.NodeInflater
 import ru.orangesoftware.financisto2.AbstractListFragment
+import ru.orangesoftware.financisto2.common.DbAdapterInstanceDelegation
 import ru.orangesoftware.financisto2.dialog.TransactionInfoDialog
 import ru.orangesoftware.financisto2.template.SelectTemplateActivity
 import ru.orangesoftware.financisto2.template.SelectTemplateFragment
@@ -64,6 +66,8 @@ private const val BILL_PREVIEW_REQUEST = 7
 private const val FILTER_REQUEST = 6
 
 open class BlotterFragment : AbstractListFragment() {
+
+    protected val db: DatabaseAdapter by DbAdapterInstanceDelegation(this)
 
     private lateinit var nodeInflater: NodeInflater
     private var selectedId: Long = -1

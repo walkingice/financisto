@@ -44,10 +44,13 @@ import ru.orangesoftware.financisto.utils.IntegrityCheckAutobackup
 import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.view.NodeInflater
+import ru.orangesoftware.financisto2.common.DbAdapterInstanceDelegation
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit.DAYS
 
 class AccountListFragment : AbstractListFragment() {
+
+    private val db: DatabaseAdapter by DbAdapterInstanceDelegation(this)
 
     private lateinit var inflatedView: View
     private var accountActionGrid: QuickActionWidget? = null

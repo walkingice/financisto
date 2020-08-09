@@ -15,7 +15,6 @@ import android.widget.ListView
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import ru.orangesoftware.financisto.R
-import ru.orangesoftware.financisto.db.DatabaseAdapter
 import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.PinProtection
 import java.util.LinkedList
@@ -28,22 +27,10 @@ private const val MENU_ADD = Menu.FIRST + 4
 abstract class AbstractListFragment : Fragment() {
 
     protected var enablePin = true
-
-    protected lateinit var db: DatabaseAdapter
     protected lateinit var cursor: Cursor
     protected lateinit var adapter: ListAdapter
     protected lateinit var listView: ListView
     protected var bAdd: ImageButton? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        db = DatabaseAdapter(requireContext()).also { it.open() }
-    }
-
-    override fun onDestroy() {
-        db.close()
-        super.onDestroy()
-    }
 
     override fun onPause() {
         super.onPause()
