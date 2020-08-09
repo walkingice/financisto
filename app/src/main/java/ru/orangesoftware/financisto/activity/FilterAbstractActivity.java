@@ -282,7 +282,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-            case R.id.category_pick:
+            case CategorySelectorActivity.REQ_CATEGORY_PICK:
             case R.id.category_add:
                 categorySelector.onActivityResult(requestCode, resultCode, data);
                 break;

@@ -390,7 +390,7 @@ public class CategorySelector<A extends AbstractActivity> {
                     }
                     break;
                 }
-                case R.id.category_pick: {
+                case CategorySelectorActivity.REQ_CATEGORY_PICK: {
                     long categoryId = data.getLongExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID, 0);
                     selectCategory(categoryId);
                     break;

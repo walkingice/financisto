@@ -24,6 +24,8 @@ import java.util.Map;
 
 public class CategorySelectorActivity extends AbstractListActivity {
 
+    public static final int REQ_CATEGORY_PICK = 0x4001;
+
     public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
     public static final String EXCLUDED_SUB_TREE_ID = "EXCLUDED_SUB_TREE_ID";
     public static final String INCLUDE_SPLIT_CATEGORY = "INCLUDE_SPLIT_CATEGORY";
@@ -125,7 +127,7 @@ public class CategorySelectorActivity extends AbstractListActivity {
             intent.putExtra(CategorySelectorActivity.SELECTED_CATEGORY_ID, selectedId);
             intent.putExtra(CategorySelectorActivity.EXCLUDED_SUB_TREE_ID, excludingTreeId);
             intent.putExtra(CategorySelectorActivity.INCLUDE_SPLIT_CATEGORY, includeSplit);
-            activity.startActivityForResult(intent, R.id.category_pick);
+            activity.startActivityForResult(intent, REQ_CATEGORY_PICK);
             return true;
         }
         return false;
