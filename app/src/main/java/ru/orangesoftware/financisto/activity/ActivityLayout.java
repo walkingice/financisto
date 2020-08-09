@@ -162,14 +162,14 @@ public class ActivityLayout {
         return textView;
     }
 
-    static class FilterNode {
-        final View nodeLayout;
-        final View listLayout;
-        final View filterLayout;
-        final TextView textView;
-        final AutoCompleteTextView autoCompleteTextView;
+    public static class FilterNode {
+        public final View nodeLayout;
+        public final View listLayout;
+        public final View filterLayout;
+        public final TextView textView;
+        public final AutoCompleteTextView autoCompleteTextView;
 
-        FilterNode(View nodeLayout, View listLayout, View filterLayout, TextView textView, AutoCompleteTextView autoCompleteTextView) {
+        public FilterNode(View nodeLayout, View listLayout, View filterLayout, TextView textView, AutoCompleteTextView autoCompleteTextView) {
             this.nodeLayout = nodeLayout;
             this.listLayout = listLayout;
             this.filterLayout = filterLayout;
@@ -177,25 +177,25 @@ public class ActivityLayout {
             this.autoCompleteTextView = autoCompleteTextView;
         }
 
-        void showFilter() {
+        public void showFilter() {
             listLayout.setVisibility(View.GONE);
             filterLayout.setVisibility(View.VISIBLE);
             autoCompleteTextView.setText("");
             Utils.openSoftKeyboard(autoCompleteTextView, autoCompleteTextView.getContext());
         }
 
-        void hideFilter() {
+        public void hideFilter() {
             Utils.closeSoftKeyboard(autoCompleteTextView, autoCompleteTextView.getContext());
             filterLayout.setVisibility(View.GONE);
             listLayout.setVisibility(View.VISIBLE);
         }
 
-        boolean isFilterOn() {
+        public boolean isFilterOn() {
             return filterLayout.getVisibility() == View.VISIBLE;
         }
     }
 
-    FilterNode addFilterNode(LinearLayout layout, int id, int actBtnId, int clearBtnId, int labelId, int defaultValueResId, int showListId, int closeFilterId, int showFilterId) {
+    public FilterNode addFilterNode(LinearLayout layout, int id, int actBtnId, int clearBtnId, int labelId, int defaultValueResId, int showListId, int closeFilterId, int showFilterId) {
         ListBuilder b = inflater.new ListBuilder(layout, R.layout.select_entry_filter);
         final View v = b.withButtonId(actBtnId, listener)
                 .withClearButtonId(clearBtnId, listener)

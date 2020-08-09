@@ -5,11 +5,11 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import ru.orangesoftware.financisto.R
-import ru.orangesoftware.financisto.activity.CategorySelector.SelectorType
 import ru.orangesoftware.financisto.db.DatabaseHelper.AccountColumns
 import ru.orangesoftware.financisto.model.Account
 import ru.orangesoftware.financisto.model.Transaction
 import ru.orangesoftware.financisto.utils.MyPreferences
+import ru.orangesoftware.financisto2.activity.CategorySelector
 
 class TransferActivity : AbstractTransactionActivity() {
     private var accountFromText: TextView? = null
@@ -52,7 +52,7 @@ class TransferActivity : AbstractTransactionActivity() {
         }
         // category
         if (MyPreferences.isShowCategoryInTransferScreen(this)) {
-            categorySelector.createNode(layout, SelectorType.TRANSFER)
+            categorySelector.createNode(layout, CategorySelector.SelectorType.TRANSFER)
         } else {
             categorySelector.createDummyNode()
         }

@@ -22,7 +22,6 @@ import greendroid.widget.QuickActionGrid
 import greendroid.widget.QuickActionWidget
 import greendroid.widget.QuickActionWidget.OnQuickActionClickListener
 import ru.orangesoftware.financisto.R
-import ru.orangesoftware.financisto.activity.CategorySelector.SelectorType
 import ru.orangesoftware.financisto.activity.MyQuickAction
 import ru.orangesoftware.financisto.activity.SplitTransactionActivity
 import ru.orangesoftware.financisto.activity.SplitTransferActivity
@@ -37,6 +36,7 @@ import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.utils.SplitAdjuster
 import ru.orangesoftware.financisto.utils.TransactionUtils
 import ru.orangesoftware.financisto.utils.Utils
+import ru.orangesoftware.financisto2.activity.CategorySelector
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -171,7 +171,7 @@ class TransactionActivity : AbstractTransactionActivity() {
             createPayeeNode(layout)
         }
         //category
-        categorySelector.createNode(layout, SelectorType.TRANSACTION)
+        categorySelector.createNode(layout, CategorySelector.SelectorType.TRANSACTION)
         //amount
         currencyText = if (!isUpdateBalanceMode && MyPreferences.isShowCurrency(this)) {
             x.addListNode(
@@ -497,13 +497,12 @@ class TransactionActivity : AbstractTransactionActivity() {
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
-        data: Intent
+        data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == SPLIT_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
-                val split =
-                    Transaction.fromIntentAsSplit(data)
+                val split = Transaction.fromIntentAsSplit(data)
                 addOrEditSplit(split)
             }
         }

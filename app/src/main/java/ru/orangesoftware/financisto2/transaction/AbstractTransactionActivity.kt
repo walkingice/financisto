@@ -26,18 +26,12 @@ import com.wdullaer.materialdatetimepicker.date.DatePickerDialog
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog
 import greendroid.widget.QuickActionGrid
 import greendroid.widget.QuickActionWidget
-import greendroid.widget.QuickActionWidget.OnQuickActionClickListener
 import io.reactivex.disposables.CompositeDisposable
 import ru.orangesoftware.financisto.R
-import ru.orangesoftware.financisto.activity.AbstractActivity
 import ru.orangesoftware.financisto.activity.AccountWidget
-import ru.orangesoftware.financisto.activity.CategorySelector
-import ru.orangesoftware.financisto.activity.CategorySelector.CategorySelectorListener
-import ru.orangesoftware.financisto.activity.LocationSelector
+import ru.orangesoftware.financisto2.activity.CategorySelector.CategorySelectorListener
 import ru.orangesoftware.financisto.activity.MyQuickAction
 import ru.orangesoftware.financisto.activity.NotificationOptionsActivity
-import ru.orangesoftware.financisto.activity.PayeeSelector
-import ru.orangesoftware.financisto.activity.ProjectSelector
 import ru.orangesoftware.financisto.activity.RecurrenceActivity
 import ru.orangesoftware.financisto.activity.RequestPermission
 import ru.orangesoftware.financisto.activity.UiUtils
@@ -62,6 +56,11 @@ import ru.orangesoftware.financisto.utils.Utils
 import ru.orangesoftware.financisto.view.AttributeView
 import ru.orangesoftware.financisto.view.AttributeViewFactory
 import ru.orangesoftware.financisto.widget.RateLayoutView
+import ru.orangesoftware.financisto2.activity.AbstractActivity
+import ru.orangesoftware.financisto2.activity.CategorySelector
+import ru.orangesoftware.financisto2.activity.LocationSelector
+import ru.orangesoftware.financisto2.activity.PayeeSelector
+import ru.orangesoftware.financisto2.activity.ProjectSelector
 import java.io.File
 import java.text.DateFormat
 import java.util.Calendar
@@ -556,7 +555,7 @@ abstract class AbstractTransactionActivity : AbstractActivity(), CategorySelecto
     override fun onActivityResult(
         requestCode: Int,
         resultCode: Int,
-        data: Intent
+        data: Intent?
     ) {
         super.onActivityResult(requestCode, resultCode, data)
         projectSelector!!.onActivityResult(requestCode, resultCode, data)
@@ -568,14 +567,13 @@ abstract class AbstractTransactionActivity : AbstractActivity(), CategorySelecto
         if (resultCode == Activity.RESULT_OK) {
             when (requestCode) {
                 RECURRENCE_REQUEST -> {
-                    val recurrence =
-                        data.getStringExtra(RecurrenceActivity.RECURRENCE_PATTERN)
+                    val recurrence = data!!.getStringExtra(RecurrenceActivity.RECURRENCE_PATTERN)
                     setRecurrence(recurrence)
                 }
                 NOTIFICATION_REQUEST -> {
-                    val notificationOptions =
-                        data.getStringExtra(NotificationOptionsActivity.NOTIFICATION_OPTIONS)
-                    setNotification(notificationOptions)
+                    val options =
+                        data!!.getStringExtra(NotificationOptionsActivity.NOTIFICATION_OPTIONS)
+                    setNotification(options)
                 }
                 else -> {
                 }

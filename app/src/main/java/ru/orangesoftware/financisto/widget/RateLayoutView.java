@@ -21,7 +21,7 @@ import static ru.orangesoftware.financisto.activity.AbstractActivity.setVisibili
  */
 public class RateLayoutView implements RateNodeOwner {
 
-    private final AbstractActivity activity;
+    private final Activity activity;
     private final ActivityLayout x;
     private final LinearLayout layout;
 
@@ -40,7 +40,7 @@ public class RateLayoutView implements RateNodeOwner {
     private Currency currencyFrom;
     private Currency currencyTo;
 
-    public RateLayoutView(AbstractActivity activity, ActivityLayout x, LinearLayout layout) {
+    public RateLayoutView(Activity activity, ActivityLayout x, LinearLayout layout) {
         this.activity = activity;
         this.x = x;
         this.layout = layout;
