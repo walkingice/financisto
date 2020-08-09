@@ -12,6 +12,8 @@ import androidx.core.content.FileProvider;
 import android.widget.ListAdapter;
 import android.widget.Toast;
 import java.io.File;
+import java.util.List;
+
 import ru.orangesoftware.financisto.BuildConfig;
 import ru.orangesoftware.financisto.R;
 import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermission;
@@ -82,7 +84,17 @@ public enum MenuListItem implements SummaryEntityEnum {
             if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 return;
             }
-            final String[] backupFiles = Backup.INSTANCE.listBackups(activity);
+            final List<File> backupFiles = Backup.INSTANCE.listBackups(activity);
+            final String[] backupFileNames;
+            if (backupFiles != null) {
+                backupFileNames = new String[backupFiles.size()];
+                for (int i = 0; i < backupFiles.size(); i++) {
+                    backupFileNames[i] = backupFiles.get(i).getName();
+                }
+            } else {
+                backupFileNames = null;
+            }
+
             final String[] selectedBackupFile = new String[1];
             new AlertDialog.Builder(activity)
                     .setTitle(R.string.restore_database)
@@ -92,9 +104,9 @@ public enum MenuListItem implements SummaryEntityEnum {
                             new BackupImportTask(activity, d).execute(selectedBackupFile);
                         }
                     })
-                    .setSingleChoiceItems(backupFiles, -1, (dialog, which) -> {
-                        if (backupFiles != null && which >= 0 && which < backupFiles.length) {
-                            selectedBackupFile[0] = backupFiles[which];
+                    .setSingleChoiceItems(backupFileNames, -1, (dialog, which) -> {
+                        if (backupFileNames != null && which >= 0 && which < backupFileNames.length) {
+                            selectedBackupFile[0] = backupFileNames[which];
                         }
                     })
                     .show();

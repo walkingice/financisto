@@ -82,17 +82,14 @@ object Backup {
         return File(path, backupFileName)
     }
 
-    fun listBackups(context: Context?): Array<String?>? {
+    fun listBackups(context: Context): List<File>? {
         val backupPath = getBackupFolder(context) ?: return null
-        val files = backupPath.list { dir: File?, filename: String ->
+        val files:List<File> = backupPath.list { dir: File?, filename: String ->
             filename.endsWith(".backup")
+        }.map {
+            File(backupPath, it)
         }
-        return if (files != null) {
-            Arrays.sort(files) { s1: String?, s2: String? -> s2!!.compareTo(s1!!) }
-            files
-        } else {
-            arrayOfNulls(0)
-        }
+        return files
     }
 
     fun tableHasSystemIds(tableName: String?): Boolean {
