@@ -18,6 +18,7 @@ import ru.orangesoftware.financisto.model.Currency;
 import ru.orangesoftware.financisto.model.TransactionStatus;
 import ru.orangesoftware.financisto.rates.ExchangeRateProvider;
 import ru.orangesoftware.financisto.rates.ExchangeRateProviderFactory;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 public class MyPreferences {
 
@@ -536,7 +537,7 @@ public class MyPreferences {
 
     public static String getDatabaseBackupFolder(Context context) {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return sharedPreferences.getString("database_backup_folder", Export.DEFAULT_EXPORT_PATH.getAbsolutePath());
+        return sharedPreferences.getString("database_backup_folder", Backup.DEFAULT_EXPORT_PATH.getAbsolutePath());
     }
 
     public static void setDatabaseBackupFolder(Context context, String databaseBackupFolder) {

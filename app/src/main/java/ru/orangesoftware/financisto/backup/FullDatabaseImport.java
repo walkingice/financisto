@@ -19,6 +19,7 @@ import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.service.RecurrenceScheduler;
 import ru.orangesoftware.financisto.utils.CurrencyCache;
 import ru.orangesoftware.financisto.utils.IntegrityFix;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 public abstract class FullDatabaseImport {
 
@@ -55,7 +56,7 @@ public abstract class FullDatabaseImport {
     }
 
     protected List<String> tablesToClean() {
-        List<String> list = new ArrayList<>(Arrays.asList(Backup.BACKUP_TABLES));
+        List<String> list = new ArrayList<>(Arrays.asList(Backup.INSTANCE.BACKUP_TABLES));
         list.add("running_balance");
         return list;
     }

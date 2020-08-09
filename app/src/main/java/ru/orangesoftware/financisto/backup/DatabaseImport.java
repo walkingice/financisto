@@ -36,9 +36,8 @@ import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.db.DatabaseSchemaEvolution;
 import ru.orangesoftware.financisto.export.Export;
 import ru.orangesoftware.financisto.export.dropbox.Dropbox;
+import ru.orangesoftware.financisto2.storage.Backup;
 
-import static ru.orangesoftware.financisto.backup.Backup.RESTORE_SCRIPTS;
-import static ru.orangesoftware.financisto.backup.Backup.tableHasOrder;
 import static ru.orangesoftware.financisto.db.DatabaseHelper.ATTRIBUTES_TABLE;
 import static ru.orangesoftware.financisto.db.DatabaseHelper.LOCATIONS_TABLE;
 import static ru.orangesoftware.orb.EntityManager.DEF_SORT_COL;
@@ -114,7 +113,7 @@ public class DatabaseImport extends FullDatabaseImport {
                             cleanupValues(tableName, values);
                             if (values.size() > 0) {
                                 // if old dump format - then just adding sequential default order
-                                if (tableHasOrder(tableName) && !values.containsKey(DEF_SORT_COL)) {
+                                if (Backup.INSTANCE.tableHasOrder(tableName) && !values.containsKey(DEF_SORT_COL)) {
                                     values.put(DEF_SORT_COL, ++rowNum);
                                 }
                                 db.insert(tableName, null, values);
@@ -146,7 +145,7 @@ public class DatabaseImport extends FullDatabaseImport {
     }
 
     private void runRestoreAlterscripts() throws IOException {
-        for (String script : RESTORE_SCRIPTS) {
+        for (String script : Backup.INSTANCE.RESTORE_SCRIPTS) {
             schemaEvolution.runAlterScript(db, script);
         }
     }

@@ -13,7 +13,6 @@ package ru.orangesoftware.financisto.export;
 import android.Manifest;
 import android.content.Context;
 import android.content.pm.PackageManager.NameNotFoundException;
-import android.os.Environment;
 
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -23,8 +22,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
 import ru.orangesoftware.financisto.R;
@@ -37,7 +34,6 @@ import ru.orangesoftware.financisto2.storage.Backup;
 
 public abstract class Export {
 
-    public static final File DEFAULT_EXPORT_PATH = Environment.getExternalStoragePublicDirectory("financisto");
     public static final String BACKUP_MIME_TYPE = "application/x-gzip";
 
     private final Context context;
@@ -102,20 +98,11 @@ public abstract class Export {
     protected abstract String getExtension();
 
     public static File getBackupFolder(Context context) {
-        String path = MyPreferences.getDatabaseBackupFolder(context);
-        File file = new File(path);
-        file.mkdirs();
-        if (file.isDirectory() && file.canWrite()) {
-            return file;
-        }
-        file = Export.DEFAULT_EXPORT_PATH;
-        file.mkdirs();
-        return file;
+        return Backup.INSTANCE.getBackupFolder(context);
     }
 
     public static File getBackupFile(Context context, String backupFileName) {
-        File path = getBackupFolder(context);
-        return new File(path, backupFileName);
+        return Backup.INSTANCE.getBackupFile(context, backupFileName);
     }
 
     public static void uploadBackupFileToDropbox(Context context, String backupFileName) throws Exception {

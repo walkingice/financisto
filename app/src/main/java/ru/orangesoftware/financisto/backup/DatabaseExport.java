@@ -17,12 +17,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import ru.orangesoftware.financisto.export.Export;
 import ru.orangesoftware.financisto.utils.Utils;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 import java.io.*;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
-import static ru.orangesoftware.financisto.backup.Backup.*;
 import static ru.orangesoftware.financisto.db.DatabaseHelper.ACCOUNT_TABLE;
 import static ru.orangesoftware.orb.EntityManager.DEF_SORT_COL;
 
@@ -79,7 +79,7 @@ public class DatabaseExport extends Export {
 
     @Override
     protected void writeBody(BufferedWriter bw) throws IOException {
-        for (String tableName : BACKUP_TABLES) {
+        for (String tableName : Backup.BACKUP_TABLES) {
             exportTable(bw, tableName);
         }
     }
@@ -90,10 +90,10 @@ public class DatabaseExport extends Export {
     }
 
     private void exportTable(BufferedWriter bw, String tableName) throws IOException {
-        final boolean orderedTable = tableHasOrder(tableName);
+        final boolean orderedTable = Backup.INSTANCE.tableHasOrder(tableName);
         final boolean customOrdered = ACCOUNT_TABLE.equals(tableName);
         String sql = "select * from " + tableName 
-                + (tableHasSystemIds(tableName) ? " WHERE _id > 0 " : " ") 
+                + (Backup.INSTANCE.tableHasSystemIds(tableName) ? " WHERE _id > 0 " : " ")
                 + (orderedTable ? " order by " + DEF_SORT_COL + " asc" : "");
         long row = 0;
         try (Cursor c = db.rawQuery(sql, null)) {

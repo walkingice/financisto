@@ -16,7 +16,7 @@ import ru.orangesoftware.financisto.BuildConfig;
 import ru.orangesoftware.financisto.R;
 import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermission;
 import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermissions;
-import ru.orangesoftware.financisto.backup.Backup;
+
 import ru.orangesoftware.financisto.bus.GreenRobotBus_;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.export.BackupExportTask;
@@ -37,6 +37,7 @@ import ru.orangesoftware.financisto.utils.ExecutableEntityEnum;
 import ru.orangesoftware.financisto.utils.IntegrityFix;
 import ru.orangesoftware.financisto.utils.SummaryEntityEnum;
 import ru.orangesoftware.financisto2.activity.MainActivity;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 public enum MenuListItem implements SummaryEntityEnum {
 
@@ -81,7 +82,7 @@ public enum MenuListItem implements SummaryEntityEnum {
             if (isRequestingPermission(activity, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
                 return;
             }
-            final String[] backupFiles = Backup.listBackups(activity);
+            final String[] backupFiles = Backup.INSTANCE.listBackups(activity);
             final String[] selectedBackupFile = new String[1];
             new AlertDialog.Builder(activity)
                     .setTitle(R.string.restore_database)
