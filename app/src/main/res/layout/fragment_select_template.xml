@@ -12,12 +12,6 @@ Contributors: Denis Solonenko - initial API and implementation
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/searchFilter"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="Type template..." /> <!-- todo.mb move to res -->
-
     <ListView
         android:id="@android:id/list"
         android:layout_width="match_parent"
