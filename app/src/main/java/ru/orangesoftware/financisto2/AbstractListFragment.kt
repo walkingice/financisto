@@ -4,14 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.os.Bundle
-import android.os.Parcelable
-import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ImageButton
 import android.widget.ListAdapter
-import android.widget.ListView
 import android.widget.PopupMenu
 import androidx.fragment.app.Fragment
 import ru.orangesoftware.financisto.R
@@ -27,9 +24,7 @@ private const val MENU_ADD = Menu.FIRST + 4
 abstract class AbstractListFragment : Fragment() {
 
     protected var enablePin = true
-    protected lateinit var cursor: Cursor
-    protected lateinit var adapter: ListAdapter
-    protected lateinit var listView: ListView
+    protected val listViewController = ListViewController(this)
     protected var bAdd: ImageButton? = null
 
     override fun onPause() {
@@ -44,20 +39,20 @@ abstract class AbstractListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        listView = view.findViewById(android.R.id.list)
-        internalOnCreate(view, savedInstanceState)
-        cursor = createCursor()
-        recreateAdapter(cursor)
-        listView.setOnItemLongClickListener { _: AdapterView<*>?, v: View, position: Int, id: Long ->
+        listViewController.onCreate()
+        listViewController.listView.setOnItemLongClickListener { _: AdapterView<*>?, v: View, position: Int, id: Long ->
             onItemLongClick(v, position, id)
             true
         }
-        listView.setOnItemClickListener { _, v: View, position, id -> onItemClick(v, position, id) }
+        listViewController.listView.setOnItemClickListener { _, v: View, position, id ->
+            onItemClick(v, position, id)
+        }
+        internalOnCreate(view, savedInstanceState)
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        cursor.close()
+        listViewController.onDestroy()
     }
 
     protected open fun internalOnCreate(inflatedView: View, savedInstanceState: Bundle?) {
@@ -67,7 +62,7 @@ abstract class AbstractListFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == Activity.RESULT_OK) {
-            recreateCursor()
+            listViewController.recreateCursor()
         }
     }
 
@@ -108,34 +103,31 @@ abstract class AbstractListFragment : Fragment() {
 
     protected open fun onButtonAddClicked() {}
 
-    protected open fun recreateCursor() {
-        Log.i("AbstractListFragment", "Recreating cursor")
-        val state: Parcelable = listView.onSaveInstanceState()
-        try {
-            createCursor().also {
-                recreateAdapter(it)
-                cursor.close()
-                cursor = it
-            }
-        } finally {
-            listView.onRestoreInstanceState(state)
-            onCursorRecreated()
+    inner class ListViewController(fragment: Fragment) : AbstractListViewController(fragment) {
+        override fun createCursorImpl(): Cursor {
+            return createCursor()
+        }
+
+        override fun createAdapterImpl(cursor: Cursor): ListAdapter {
+            return createAdapter(cursor)
+        }
+
+        override fun onCursorRecreatedImpl() {
+            return onCursorRecreated()
+        }
+
+        override fun onAdapterRecreatedImpl() {
+            return onAdapterRecreated()
         }
     }
 
-    private fun recreateAdapter(cursor: Cursor) {
-        adapter = createAdapter(cursor)
-        listView.adapter = adapter
-        onAdapterRecreated()
-    }
+    open fun integrityCheck() {}
 
     protected open fun onCursorRecreated() {}
     protected open fun onAdapterRecreated() {}
-
-    open fun integrityCheck() {}
-
     protected abstract fun createCursor(): Cursor
     protected abstract fun createAdapter(cursor: Cursor): ListAdapter
+
     protected abstract fun deleteItem(view: View, position: Int, id: Long)
     protected abstract fun editItem(view: View, position: Int, id: Long)
     protected abstract fun viewItem(view: View, position: Int, id: Long)

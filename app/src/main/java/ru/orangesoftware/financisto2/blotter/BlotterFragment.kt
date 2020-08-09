@@ -142,8 +142,7 @@ open class BlotterFragment : AbstractListFragment() {
         blotterFilter.toBundle(outState)
     }
 
-    override fun recreateCursor() {
-        super.recreateCursor()
+    override fun onCursorRecreated() {
         calculateTotals()
     }
 
@@ -191,12 +190,12 @@ open class BlotterFragment : AbstractListFragment() {
                 saveFilter()
             }
             applyFilter()
-            recreateCursor()
+            listViewController.recreateCursor()
         } else if (resultCode == Activity.RESULT_OK && requestCode == NEW_TRANSACTION_FROM_TEMPLATE_REQUEST && data != null) {
             createTransactionFromTemplate(data)
         }
         if (resultCode == Activity.RESULT_OK || resultCode == Activity.RESULT_FIRST_USER) {
-            recreateCursor()
+            listViewController.recreateCursor()
         }
     }
 
@@ -406,12 +405,12 @@ open class BlotterFragment : AbstractListFragment() {
 
     private fun clearTransaction(selectedId: Long) {
         BlotterOperations(this, db, selectedId, callback).clearTransaction()
-        recreateCursor()
+        listViewController.recreateCursor()
     }
 
     private fun reconcileTransaction(selectedId: Long) {
         BlotterOperations(this, db, selectedId, callback).reconcileTransaction()
-        recreateCursor()
+        listViewController.recreateCursor()
     }
 
     private fun duplicateTransaction(id: Long, multiplier: Int): Long {
@@ -423,7 +422,7 @@ open class BlotterFragment : AbstractListFragment() {
             getString(R.string.duplicate_success)
         }
         Toast.makeText(requireContext(), toastText, Toast.LENGTH_LONG).show()
-        recreateCursor()
+        listViewController.recreateCursor()
         AccountWidget.updateWidgets(requireContext())
         return newId
     }
@@ -446,7 +445,7 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     fun afterDeletingTransaction(id: Long) {
-        recreateCursor()
+        listViewController.recreateCursor()
         AccountWidget.updateWidgets(requireContext())
     }
 
@@ -508,7 +507,7 @@ open class BlotterFragment : AbstractListFragment() {
                 } else {
                     clearButton.visibility = View.GONE
                 }
-                recreateCursor()
+                listViewController.recreateCursor()
                 applyFilter()
                 saveFilter()
             }

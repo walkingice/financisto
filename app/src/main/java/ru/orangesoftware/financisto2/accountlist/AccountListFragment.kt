@@ -76,7 +76,7 @@ class AccountListFragment : AbstractListFragment() {
         inflatedView.findViewById<View>(R.id.integrity_error).setOnClickListener { v: View ->
             v.visibility = View.GONE
         }
-        listView.onItemLongClickListener =
+        listViewController.listView.onItemLongClickListener =
             OnItemLongClickListener { _: AdapterView<*>?, view: View?, _: Int, id: Long ->
                 selectedId = id
                 prepareAccountActionGrid()
@@ -285,7 +285,7 @@ class AccountListFragment : AbstractListFragment() {
             .setMessage(R.string.delete_account_confirm)
             .setPositiveButton(R.string.yes) { arg0: DialogInterface?, arg1: Int ->
                 db.deleteAccount(id)
-                recreateCursor()
+                listViewController.recreateCursor()
             }
             .setNegativeButton(R.string.no, null)
             .show()
@@ -341,7 +341,7 @@ class AccountListFragment : AbstractListFragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == VIEW_ACCOUNT_REQUEST || requestCode == PURGE_ACCOUNT_REQUEST) {
-            recreateCursor()
+            listViewController.recreateCursor()
         }
     }
 
@@ -372,7 +372,7 @@ class AccountListFragment : AbstractListFragment() {
     private fun flipAccountActive(a: Account) {
         a.isActive = !a.isActive
         db.saveAccount(a)
-        recreateCursor()
+        listViewController.recreateCursor()
     }
 
     private fun deleteAccount() {
@@ -380,7 +380,7 @@ class AccountListFragment : AbstractListFragment() {
             .setMessage(R.string.delete_account_confirm)
             .setPositiveButton(R.string.yes) { arg0: DialogInterface?, arg1: Int ->
                 db.deleteAccount(selectedId)
-                recreateCursor()
+                listViewController.recreateCursor()
             }
             .setNegativeButton(R.string.no, null)
             .show()

@@ -29,7 +29,7 @@ class SelectTemplateFragment : TemplatesListFragment() {
 
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
         internalOnCreateTemplates(view)
-        listView.onItemLongClickListener =
+        listViewController.listView.onItemLongClickListener =
             AdapterView.OnItemLongClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
                 returnResult(id, true)
                 true
@@ -77,7 +77,7 @@ class SelectTemplateFragment : TemplatesListFragment() {
                         )
                     )
                 }
-                recreateCursor()
+                listViewController.recreateCursor()
             }
         })
     }
