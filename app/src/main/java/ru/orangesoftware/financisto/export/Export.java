@@ -33,6 +33,7 @@ import ru.orangesoftware.financisto.export.drive.GoogleDriveClient;
 import ru.orangesoftware.financisto.export.drive.GoogleDriveClient_;
 import ru.orangesoftware.financisto.export.dropbox.Dropbox;
 import ru.orangesoftware.financisto.utils.MyPreferences;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 public abstract class Export {
 
@@ -73,8 +74,7 @@ public abstract class Export {
     }
 
     public String generateFilename() {
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMdd'_'HHmmss'_'SSS");
-        return df.format(new Date()) + getExtension();
+        return Backup.INSTANCE.generateFilename(getExtension());
     }
 
     public byte[] generateBackupBytes() throws Exception {
