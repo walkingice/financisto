@@ -14,6 +14,13 @@ import ru.orangesoftware.financisto2.blotter.BlotterListAdapter
 
 open class TemplatesListFragment : BlotterFragment() {
 
+    init {
+        // fix filter
+        blotterFilter = WhereFilter("templates")
+        blotterFilter.eq(BlotterFilter.IS_TEMPLATE, "1")
+        blotterFilter.eq(BlotterFilter.PARENT_ID, "0")
+    }
+
     override fun calculateTotals() {
         // do nothing
     }
@@ -50,10 +57,6 @@ open class TemplatesListFragment : BlotterFragment() {
     protected fun internalOnCreateTemplates(view: View) {
         // change empty list message
         view.findViewById<TextView>(android.R.id.empty)?.setText(R.string.no_templates)
-        // fix filter
-        blotterFilter = WhereFilter("templates")
-        blotterFilter.eq(BlotterFilter.IS_TEMPLATE, 1.toString())
-        blotterFilter.eq(BlotterFilter.PARENT_ID, 0.toString())
     }
 
     companion object {
