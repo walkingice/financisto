@@ -9,7 +9,6 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.Button
 import android.widget.EditText
-import android.widget.ImageButton
 import android.widget.ListAdapter
 import android.widget.TextView
 import ru.orangesoftware.financisto.R
@@ -25,7 +24,6 @@ class SelectTemplateFragment : TemplatesListFragment() {
     override fun getLayoutResourceId(): Int = R.layout.fragment_select_template
     private var multiplierText: TextView? = null
     private var searchFilter: EditText? = null
-    private var multiplier = 1
 
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
         internalOnCreateTemplates(view)
@@ -47,10 +45,7 @@ class SelectTemplateFragment : TemplatesListFragment() {
             requireActivity().finish()
         }
         multiplierText = view.findViewById(R.id.multiplier)
-        var ib = view.findViewById<ImageButton>(R.id.bPlus)
-        ib.setOnClickListener { arg0: View? -> incrementMultiplier() }
-        ib = view.findViewById(R.id.bMinus)
-        ib.setOnClickListener { arg0: View? -> decrementMultiplier() }
+
         searchFilter = view.findViewById(R.id.searchFilter)
         searchFilter!!.addTextChangedListener(object :
             SearchFilterTextWatcherListener(MyEntityListActivity.FILTER_DELAY_MILLIS) {
@@ -86,19 +81,6 @@ class SelectTemplateFragment : TemplatesListFragment() {
         return super.createCursor()
     }
 
-    protected fun incrementMultiplier() {
-        ++multiplier
-        multiplierText!!.text = "x$multiplier"
-    }
-
-    protected fun decrementMultiplier() {
-        --multiplier
-        if (multiplier < 1) {
-            multiplier = 1
-        }
-        multiplierText!!.text = "x$multiplier"
-    }
-
     override fun registerForContextMenu(view: View) {}
     override fun createAdapter(cursor: Cursor): ListAdapter {
         return TemplateListAdapter(requireContext(), db, cursor)
@@ -118,7 +100,6 @@ class SelectTemplateFragment : TemplatesListFragment() {
     fun returnResult(id: Long, edit: Boolean) {
         val intent = Intent()
         intent.putExtra(TEMPATE_ID, id)
-        intent.putExtra(MULTIPLIER, multiplier)
         if (edit) intent.putExtra(EDIT_AFTER_CREATION, true)
         requireActivity().setResult(Activity.RESULT_OK, intent)
         requireActivity().finish()
@@ -126,7 +107,6 @@ class SelectTemplateFragment : TemplatesListFragment() {
 
     companion object {
         const val TEMPATE_ID = "template_id"
-        const val MULTIPLIER = "multiplier"
         const val EDIT_AFTER_CREATION = "edit_after_creation"
 
         fun newInstance(): TemplatesListFragment {

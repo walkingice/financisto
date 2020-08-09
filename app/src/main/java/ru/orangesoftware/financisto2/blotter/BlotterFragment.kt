@@ -547,7 +547,7 @@ open class BlotterFragment : AbstractListFragment() {
 
     private fun createTransactionFromTemplate(data: Intent) {
         val templateId = data.getLongExtra(SelectTemplateFragment.TEMPATE_ID, -1)
-        val multiplier = data.getIntExtra(SelectTemplateFragment.MULTIPLIER, 1)
+        val multiplier = 1
         val edit =
             data.getBooleanExtra(SelectTemplateFragment.EDIT_AFTER_CREATION, false)
         if (templateId > 0) {

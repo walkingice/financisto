@@ -44,28 +44,6 @@ Contributors: Denis Solonenko - initial API and implementation
             android:layout_weight="1"
             android:text="@string/edit" />
 
-        <ImageButton
-            android:id="@+id/bMinus"
-            style="@style/MinusButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp" />
-
-        <TextView
-            android:id="@+id/multiplier"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="x1"
-            android:textColor="#ffffff"
-            android:textStyle="bold" />
-
-        <ImageButton
-            android:id="@+id/bPlus"
-            style="@style/PlusButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="10dp" />
-
         <Button
             android:id="@+id/bCancel"
             android:layout_width="0dp"
