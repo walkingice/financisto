@@ -10,8 +10,6 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.AdapterView.OnItemLongClickListener
 import android.widget.ImageButton
 import android.widget.ListAdapter
 import android.widget.PopupMenu
@@ -27,7 +25,6 @@ import ru.orangesoftware.financisto.activity.BlotterActivity
 import ru.orangesoftware.financisto.activity.BlotterFilterActivity
 import ru.orangesoftware.financisto.activity.IntegrityCheckTask
 import ru.orangesoftware.financisto.activity.MenuListActivity_
-import ru.orangesoftware.financisto.activity.MenuListItem.MENU_BACKUP
 import ru.orangesoftware.financisto.activity.MyQuickAction
 import ru.orangesoftware.financisto.activity.PurgeAccountActivity
 import ru.orangesoftware.financisto.activity.TransactionActivity
@@ -44,9 +41,11 @@ import ru.orangesoftware.financisto.utils.IntegrityCheckAutobackup
 import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.view.NodeInflater
+import ru.orangesoftware.financisto2.common.view.CursorAdapter
 import ru.orangesoftware.financisto2.common.DbAdapterInstanceDelegation
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit.DAYS
+import ru.orangesoftware.financisto2.accountlist.view.AccountListAdapter
 
 class AccountListFragment : AbstractListFragment() {
 
@@ -232,7 +231,7 @@ class AccountListFragment : AbstractListFragment() {
 
     }
 
-    override fun createAdapter(cursor: Cursor): ListAdapter {
+    override fun createListAdapter(cursor: Cursor): ListAdapter? {
         return AccountListAdapter2(requireContext(), cursor)
     }
 

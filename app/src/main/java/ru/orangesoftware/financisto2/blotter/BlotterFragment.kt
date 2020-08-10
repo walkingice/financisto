@@ -207,7 +207,7 @@ open class BlotterFragment : AbstractListFragment() {
         }
     }
 
-    override fun createAdapter(cursor: Cursor): ListAdapter {
+    override fun createListAdapter(cursor: Cursor): ListAdapter? {
         return if (isAccountBlotter) {
             TransactionsListAdapter(requireContext(), db, cursor)
         } else {

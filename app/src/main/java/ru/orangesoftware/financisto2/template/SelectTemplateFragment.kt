@@ -40,7 +40,7 @@ class SelectTemplateFragment : TemplatesListFragment() {
     }
 
     override fun registerForContextMenu(view: View) {}
-    override fun createAdapter(cursor: Cursor): ListAdapter {
+    override fun createListAdapter(cursor: Cursor): ListAdapter {
         return TemplateListAdapter(requireContext(), db, cursor)
     }
 

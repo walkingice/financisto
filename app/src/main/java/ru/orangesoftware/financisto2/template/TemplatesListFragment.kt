@@ -34,7 +34,7 @@ open class TemplatesListFragment : BlotterFragment() {
         return db.getAllTemplates(blotterFilter, sortOrder)
     }
 
-    override fun createAdapter(cursor: Cursor): ListAdapter {
+    override fun createListAdapter(cursor: Cursor): ListAdapter {
         return object : BlotterListAdapter(requireContext(), db, cursor) {
             override val isShowRunningBalance: Boolean
                 get() = false

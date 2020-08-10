@@ -6,7 +6,6 @@ import android.database.Cursor
 import android.os.Bundle
 import android.view.Menu
 import android.view.View
-import android.widget.AdapterView
 import android.widget.ImageButton
 import android.widget.ListAdapter
 import android.widget.PopupMenu
@@ -14,6 +13,7 @@ import androidx.fragment.app.Fragment
 import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.PinProtection
+import ru.orangesoftware.financisto2.common.view.CursorAdapter
 import java.util.LinkedList
 
 private const val MENU_VIEW = Menu.FIRST + 1
@@ -103,8 +103,12 @@ abstract class AbstractListFragment : Fragment() {
             return createCursor()
         }
 
-        override fun createAdapterImpl(cursor: Cursor): ListAdapter {
-            return createAdapter(cursor)
+        override fun createListAdapterImpl(cursor: Cursor): ListAdapter? {
+            return createListAdapter(cursor)
+        }
+
+        override fun createRecyclerAdapterImpl(cursor: Cursor): CursorAdapter<*, *, *>? {
+            return createRecyclerAdapter(cursor)
         }
 
         override fun onCursorRecreatedImpl() {
@@ -120,8 +124,9 @@ abstract class AbstractListFragment : Fragment() {
 
     protected open fun onCursorRecreated() {}
     protected open fun onAdapterRecreated() {}
+    protected open fun createListAdapter(cursor: Cursor): ListAdapter? = null
+    protected open fun createRecyclerAdapter(cursor: Cursor): CursorAdapter<*, *, *>? = null
     protected abstract fun createCursor(): Cursor
-    protected abstract fun createAdapter(cursor: Cursor): ListAdapter
 
     protected abstract fun deleteItem(view: View, position: Int, id: Long)
     protected abstract fun editItem(view: View, position: Int, id: Long)
