@@ -45,7 +45,6 @@ import ru.orangesoftware.financisto2.common.view.CursorAdapter
 import ru.orangesoftware.financisto2.common.DbAdapterInstanceDelegation
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit.DAYS
-import ru.orangesoftware.financisto2.accountlist.view.AccountListAdapter
 
 class AccountListFragment : AbstractListFragment() {
 
@@ -233,10 +232,6 @@ class AccountListFragment : AbstractListFragment() {
 
     override fun createListAdapter(cursor: Cursor): ListAdapter? {
         return AccountListAdapter2(requireContext(), cursor)
-    }
-
-    override fun createRecyclerAdapter(cursor: Cursor): CursorAdapter<*, *, *>? {
-        return AccountListAdapter()
     }
 
     override fun createCursor(): Cursor {
