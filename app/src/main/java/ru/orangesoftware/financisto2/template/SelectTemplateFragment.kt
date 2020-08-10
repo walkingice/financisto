@@ -17,11 +17,10 @@ class SelectTemplateFragment : TemplatesListFragment() {
 
     override fun internalOnCreate(view: View, savedInstanceState: Bundle?) {
         internalOnCreateTemplates(view)
-        listViewController.listView.onItemLongClickListener =
-            AdapterView.OnItemLongClickListener { parent: AdapterView<*>?, view: View?, position: Int, id: Long ->
-                returnResult(id, true)
-                true
-            }
+        listViewController.setOnItemLongClickListener { view, position, id ->
+            returnResult(id, true)
+        }
+
         var b = view.findViewById<Button>(R.id.bEditTemplates)
         b.setOnClickListener { arg0: View? ->
             val intent = Intent(requireActivity(), TemplatesListActivity::class.java)

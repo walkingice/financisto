@@ -40,13 +40,8 @@ abstract class AbstractListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         listViewController.onCreate()
-        listViewController.listView.setOnItemLongClickListener { _: AdapterView<*>?, v: View, position: Int, id: Long ->
-            onItemLongClick(v, position, id)
-            true
-        }
-        listViewController.listView.setOnItemClickListener { _, v: View, position, id ->
-            onItemClick(v, position, id)
-        }
+        listViewController.setOnItemLongClickListener { v, i, l -> onItemLongClick(v, i, l) }
+        listViewController.setOnItemClickListener { v, i, l -> onItemClick(v, i, l) }
         internalOnCreate(view, savedInstanceState)
     }
 

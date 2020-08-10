@@ -3,9 +3,13 @@ package ru.orangesoftware.financisto2
 import android.database.Cursor
 import android.os.Parcelable
 import android.util.Log
+import android.view.View
+import android.widget.AdapterView
 import android.widget.ListAdapter
 import android.widget.ListView
 import androidx.fragment.app.Fragment
+
+typealias ClickListener = (view: View, position: Int, id: Long) -> Unit
 
 abstract class AbstractListViewController(
     val fragment: Fragment
@@ -38,6 +42,19 @@ abstract class AbstractListViewController(
         } finally {
             listView.onRestoreInstanceState(state)
             onCursorRecreatedImpl()
+        }
+    }
+
+    fun setOnItemLongClickListener(clickListener: ClickListener) {
+        listView.setOnItemLongClickListener { _: AdapterView<*>?, v: View, position: Int, id: Long ->
+            clickListener(v, position, id)
+            true
+        }
+    }
+
+    fun setOnItemClickListener(clickListener: ClickListener) {
+        listView.setOnItemClickListener { _: AdapterView<*>?, v: View, position: Int, id: Long ->
+            clickListener(v, position, id)
         }
     }
 

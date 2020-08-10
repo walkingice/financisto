@@ -76,13 +76,11 @@ class AccountListFragment : AbstractListFragment() {
         inflatedView.findViewById<View>(R.id.integrity_error).setOnClickListener { v: View ->
             v.visibility = View.GONE
         }
-        listViewController.listView.onItemLongClickListener =
-            OnItemLongClickListener { _: AdapterView<*>?, view: View?, _: Int, id: Long ->
-                selectedId = id
-                prepareAccountActionGrid()
-                accountActionGrid!!.show(view)
-                true
-            }
+        listViewController.setOnItemLongClickListener { view, position, id ->
+            selectedId = id
+            prepareAccountActionGrid()
+            accountActionGrid!!.show(view)
+        }
     }
 
     private fun setupMenuButton() {
