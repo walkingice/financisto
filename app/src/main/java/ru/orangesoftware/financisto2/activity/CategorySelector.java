@@ -174,19 +174,28 @@ public class CategorySelector<A extends AbstractActivity> {
     private void initAutoCompleteFilter() {
         if (initAutocomplete) {
             autoCompleteAdapter = TransactionUtils.createCategoryFilterAdapter(activity, db);
-            autoCompleteTextView.setInputType(InputType.TYPE_CLASS_TEXT
-                    | InputType.TYPE_TEXT_FLAG_CAP_WORDS
-                    | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
-                    | InputType.TYPE_TEXT_VARIATION_FILTER);
-            autoCompleteTextView.setThreshold(1);
+            //autoCompleteTextView.setInputType(InputType.TYPE_CLASS_TEXT
+            //        | InputType.TYPE_TEXT_FLAG_CAP_WORDS
+            //        | InputType.TYPE_TEXT_FLAG_NO_SUGGESTIONS
+            //        | InputType.TYPE_TEXT_VARIATION_FILTER);
+            //autoCompleteTextView.setThreshold(1);
+            //autoCompleteTextView.setOnFocusChangeListener((view, hasFocus) -> {
+            //    if (hasFocus) {
+            //        autoCompleteTextView.setAdapter(requireNonNull(autoCompleteAdapter));
+            //        autoCompleteTextView.selectAll();
+            //    }
+            //});
+            //autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
+            //    activity.onSelectedId(R.id.category, id);
+            //});
+            autoCompleteTextView.setInputType(InputType.TYPE_NULL);
             autoCompleteTextView.setOnFocusChangeListener((view, hasFocus) -> {
                 if (hasFocus) {
-                    autoCompleteTextView.setAdapter(requireNonNull(autoCompleteAdapter));
-                    autoCompleteTextView.selectAll();
+                    pickCategory();
                 }
             });
-            autoCompleteTextView.setOnItemClickListener((parent, view, position, id) -> {
-                activity.onSelectedId(R.id.category, id);
+            autoCompleteTextView.setOnClickListener((view) -> {
+                pickCategory();
             });
             initAutocomplete = false;
         }
