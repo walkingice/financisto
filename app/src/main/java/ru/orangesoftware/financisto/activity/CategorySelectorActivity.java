@@ -25,6 +25,7 @@ import java.util.Map;
 public class CategorySelectorActivity extends AbstractListActivity {
 
     public static final int REQ_CATEGORY_PICK = 0x4001;
+    public static final int REQ_CATEGORY_ADD = 0x4002;
 
     public static final String SELECTED_CATEGORY_ID = "SELECTED_CATEGORY_ID";
     public static final String EXCLUDED_SUB_TREE_ID = "EXCLUDED_SUB_TREE_ID";

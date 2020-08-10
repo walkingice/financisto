@@ -283,7 +283,7 @@ public abstract class FilterAbstractActivity extends AbstractActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
             case CategorySelectorActivity.REQ_CATEGORY_PICK:
-            case R.id.category_add:
+            case CategorySelectorActivity.REQ_CATEGORY_ADD:
                 categorySelector.onActivityResult(requestCode, resultCode, data);
                 break;
         }
