@@ -235,6 +235,10 @@ class AccountListFragment : AbstractListFragment() {
         return AccountListAdapter2(requireContext(), cursor)
     }
 
+    override fun createRecyclerAdapter(cursor: Cursor): CursorAdapter<*, *, *>? {
+        return AccountListAdapter()
+    }
+
     override fun createCursor(): Cursor {
         return if (MyPreferences.isHideClosedAccounts(requireContext())) {
             db.allActiveAccounts
