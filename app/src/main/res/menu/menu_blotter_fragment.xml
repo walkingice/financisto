@@ -29,8 +29,8 @@
         app:showAsAction="collapseActionView" />
     o
     <item
-        android:id="@+id/menu_item_menu"
+        android:id="@+id/menu_item_settings"
         android:icon="@drawable/actionbar_dot_menu"
-        android:title="Menu"
+        android:title="Settings"
         app:showAsAction="collapseActionView" />
 </menu>

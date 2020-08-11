@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
-import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.View.OnFocusChangeListener
@@ -20,7 +19,6 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageButton
 import android.widget.ListAdapter
-import android.widget.PopupMenu
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.LayoutRes
@@ -34,8 +32,8 @@ import ru.orangesoftware.financisto.activity.AbstractTransactionActivity
 import ru.orangesoftware.financisto.activity.AccountWidget
 import ru.orangesoftware.financisto.activity.BlotterFilterActivity
 import ru.orangesoftware.financisto.activity.BlotterTotalsDetailsActivity
-import ru.orangesoftware.financisto.activity.FilterState
 import ru.orangesoftware.financisto.activity.IntegrityCheckTask
+import ru.orangesoftware.financisto.activity.MenuListActivity_
 import ru.orangesoftware.financisto.activity.MonthlyViewActivity
 import ru.orangesoftware.financisto.activity.MyQuickAction
 import ru.orangesoftware.financisto.activity.TransactionActivity
@@ -47,7 +45,6 @@ import ru.orangesoftware.financisto.blotter.BlotterTotalCalculationTask
 import ru.orangesoftware.financisto.blotter.TotalCalculationTask
 import ru.orangesoftware.financisto.db.DatabaseAdapter
 import ru.orangesoftware.financisto.filter.WhereFilter
-import ru.orangesoftware.financisto.model.AccountType
 import ru.orangesoftware.financisto.utils.IntegrityCheckRunningBalance
 import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.MyPreferences
@@ -73,7 +70,6 @@ open class BlotterFragment : AbstractListFragment() {
     private var selectedId: Long = -1
 
     protected var totalText: TextView? = null
-    protected var bMenu: ImageButton? = null
 
     protected var transactionActionGrid: QuickActionGrid? = null
     protected var addButtonActionGrid: QuickActionGrid? = null
@@ -131,7 +127,6 @@ open class BlotterFragment : AbstractListFragment() {
         initTotalText()
 
         applyFilter()
-        applyPopupMenu()
         calculateTotals()
         prepareTransactionActionGrid()
         prepareAddButtonActionGrid()
@@ -268,7 +263,6 @@ open class BlotterFragment : AbstractListFragment() {
         val bar = inflated.findViewById<BottomAppBar>(R.id.fragment_bottom_bar) ?: return
 
         with(bar.menu) {
-            findItem(R.id.menu_item_menu).isVisible = isAccountBlotter
             findItem(R.id.menu_item_transfer).isVisible = showAllBlotterButtons
         }
 
@@ -279,7 +273,7 @@ open class BlotterFragment : AbstractListFragment() {
                 R.id.menu_item_template -> onTemplateButtonClicked()
                 R.id.menu_item_search -> onSearchButtonClicked()
                 R.id.menu_item_filter -> onFilterButtonClicked()
-                R.id.menu_item_menu -> onMenuButtonClicked()
+                R.id.menu_item_settings-> onSettingsButtonClicked()
                 else -> return false
             }
             return true
@@ -292,15 +286,6 @@ open class BlotterFragment : AbstractListFragment() {
             addItem(NEW_TRANSACTION_REQUEST, TransactionActivity::class.java)
         } else {
             addButtonActionGrid!!.show(bAdd)
-        }
-    }
-
-    private fun applyPopupMenu() {
-        bMenu = inflatedView.findViewById(R.id.bMenu)
-        if (isAccountBlotter) {
-            bMenu?.setOnClickListener { onMenuButtonClicked() }
-        } else {
-            bMenu?.visibility = View.GONE
         }
     }
 
@@ -522,27 +507,9 @@ open class BlotterFragment : AbstractListFragment() {
         }
     }
 
-    private fun onMenuButtonClicked() {
-        val popupMenu = PopupMenu(requireContext(), bMenu)
-        val accountId = blotterFilter.accountId
-        if (accountId != -1L) {
-            // get account type
-            val account = db.getAccount(accountId)
-            val type = AccountType.valueOf(account.type)
-            val inflater: MenuInflater = requireActivity().menuInflater
-            if (type.isCreditCard) {
-                // Show menu for Credit Cards - bill
-                inflater.inflate(R.menu.ccard_blotter_menu, popupMenu.menu)
-            } else {
-                // Show menu for other accounts - monthly view
-                inflater.inflate(R.menu.blotter_menu, popupMenu.menu)
-            }
-            popupMenu.setOnMenuItemClickListener { item: MenuItem ->
-                onPopupMenuSelected(item.itemId)
-                true
-            }
-            popupMenu.show()
-        }
+    private fun onSettingsButtonClicked() {
+        val intent = Intent(requireContext(), MenuListActivity_::class.java)
+        startActivity(intent)
     }
 
     private fun createTransactionFromTemplate(data: Intent) {
