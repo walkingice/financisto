@@ -108,10 +108,9 @@ open class BlotterFragment : AbstractListFragment() {
 
         activity?.intent?.let { intent ->
             blotterFilter = WhereFilter.fromIntent(intent)
+            isAccountBlotter =
+                intent.getBooleanExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, false)
             saveFilter = intent.getBooleanExtra(SAVE_FILTER, false)
-            isAccountBlotter = intent.getBooleanExtra(
-                BlotterFilterActivity.IS_ACCOUNT_FILTER, false
-            )
         }
 
         if (savedInstanceState != null) {
@@ -185,7 +184,6 @@ open class BlotterFragment : AbstractListFragment() {
                 saveFilter()
             }
             applyFilter()
-            listViewController.recreateCursor()
         } else if (resultCode == Activity.RESULT_OK && requestCode == NEW_TRANSACTION_FROM_TEMPLATE_REQUEST && data != null) {
             createTransactionFromTemplate(data)
         }
@@ -273,7 +271,7 @@ open class BlotterFragment : AbstractListFragment() {
                 R.id.menu_item_template -> onTemplateButtonClicked()
                 R.id.menu_item_search -> onSearchButtonClicked()
                 R.id.menu_item_filter -> onFilterButtonClicked()
-                R.id.menu_item_settings-> onSettingsButtonClicked()
+                R.id.menu_item_settings -> onSettingsButtonClicked()
                 else -> return false
             }
             return true
@@ -448,7 +446,7 @@ open class BlotterFragment : AbstractListFragment() {
     }
 
     private fun onFilterButtonClicked() {
-        val intent = Intent(requireActivity(), BlotterFilterActivity::class.java)
+        val intent = Intent(requireContext(), BlotterFilterActivity::class.java)
         blotterFilter.toIntent(intent)
         intent.putExtra(
             BlotterFilterActivity.IS_ACCOUNT_FILTER,
@@ -492,7 +490,6 @@ open class BlotterFragment : AbstractListFragment() {
                 } else {
                     clearButton.visibility = View.GONE
                 }
-                listViewController.recreateCursor()
                 applyFilter()
                 saveFilter()
             }
@@ -547,6 +544,7 @@ open class BlotterFragment : AbstractListFragment() {
             requireActivity().title = getString(R.string.blotter) + " : " + title
         }
         updateFilterImage()
+        listViewController.recreateCursor()
     }
 
     protected fun updateFilterImage() {
