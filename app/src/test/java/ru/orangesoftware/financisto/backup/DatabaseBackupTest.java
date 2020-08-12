@@ -32,6 +32,7 @@ import ru.orangesoftware.financisto.test.CategoryBuilder;
 import ru.orangesoftware.financisto.test.DateTime;
 import ru.orangesoftware.financisto.test.TransactionBuilder;
 import ru.orangesoftware.financisto.utils.Utils;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.*;
@@ -105,7 +106,7 @@ public class DatabaseBackupTest extends AbstractImportExportTest {
     }
 
     private BufferedReader createFileReader(String fileName, boolean useGzip) throws IOException {
-        File backupPath = Export.getBackupFolder(getContext());
+        File backupPath = Backup.INSTANCE.getBackupFolder(getContext());
         File file = new File(backupPath, fileName);
         InputStream in = new FileInputStream(file);
         if (useGzip) {
@@ -123,7 +124,7 @@ public class DatabaseBackupTest extends AbstractImportExportTest {
     }
 
     private String fileAsString(String backupFile) throws IOException {
-        File backupPath = Export.getBackupFolder(context);
+        File backupPath = Backup.INSTANCE.getBackupFolder(context);
         File file = new File(backupPath, backupFile);
         return FileUtils.readFileToString(file, "UTF-8");
     }

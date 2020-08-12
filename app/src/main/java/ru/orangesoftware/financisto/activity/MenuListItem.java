@@ -23,7 +23,6 @@ import ru.orangesoftware.financisto.bus.GreenRobotBus_;
 import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.export.BackupExportTask;
 import ru.orangesoftware.financisto.export.BackupImportTask;
-import ru.orangesoftware.financisto.export.Export;
 import ru.orangesoftware.financisto.export.csv.CsvExportOptions;
 import ru.orangesoftware.financisto.export.csv.CsvExportTask;
 import ru.orangesoftware.financisto.export.csv.CsvImportOptions;
@@ -159,7 +158,10 @@ public enum MenuListItem implements SummaryEntityEnum {
             t.setShowResultMessage(false);
             t.setListener(result -> {
                 String backupFileName = t.backupFileName;
-                File file = Export.getBackupFile(activity, backupFileName);
+                File file = Backup.INSTANCE.findBackupFileByName(activity, backupFileName);
+                if (file == null || !file.exists()) {
+                    return;
+                }
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 Uri backupFileUri = FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID, file);
                 intent.putExtra(Intent.EXTRA_STREAM, backupFileUri);

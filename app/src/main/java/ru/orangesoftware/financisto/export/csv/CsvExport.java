@@ -57,7 +57,7 @@ public class CsvExport extends Export {
     }
 
     @Override
-    protected String getExtension() {
+    public String getExtension() {
         return ".csv";
     }
 

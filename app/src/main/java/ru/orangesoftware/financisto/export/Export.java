@@ -29,7 +29,6 @@ import ru.orangesoftware.financisto.activity.RequestPermission;
 import ru.orangesoftware.financisto.export.drive.GoogleDriveClient;
 import ru.orangesoftware.financisto.export.drive.GoogleDriveClient_;
 import ru.orangesoftware.financisto.export.dropbox.Dropbox;
-import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto2.storage.Backup;
 
 public abstract class Export {
@@ -48,9 +47,7 @@ public abstract class Export {
         if (!RequestPermission.checkPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             throw new ImportExportException(R.string.request_permissions_storage_not_granted);
         }
-        File path = getBackupFolder(context);
-        String fileName = generateFilename();
-        File file = new File(path, fileName);
+        File file = Backup.INSTANCE.createBackupTargetByExtension(context, getExtension());
         FileOutputStream outputStream = new FileOutputStream(file);
         try {
             if (useGzip) {
@@ -62,15 +59,11 @@ public abstract class Export {
             outputStream.flush();
             outputStream.close();
         }
-        return fileName;
+        return file.getName();
     }
 
     protected void export(OutputStream outputStream) throws Exception {
         generateBackup(outputStream);
-    }
-
-    public String generateFilename() {
-        return Backup.INSTANCE.generateFilename(getExtension());
     }
 
     public byte[] generateBackupBytes() throws Exception {
@@ -95,24 +88,16 @@ public abstract class Export {
 
     protected abstract void writeFooter(BufferedWriter bw) throws IOException;
 
-    protected abstract String getExtension();
-
-    public static File getBackupFolder(Context context) {
-        return Backup.INSTANCE.getBackupFolder(context);
-    }
-
-    public static File getBackupFile(Context context, String backupFileName) {
-        return Backup.INSTANCE.getBackupFile(context, backupFileName);
-    }
+    public abstract String getExtension();
 
     public static void uploadBackupFileToDropbox(Context context, String backupFileName) throws Exception {
-        File file = getBackupFile(context, backupFileName);
+        File file = Backup.INSTANCE.findBackupFileByName(context, backupFileName);
         Dropbox dropbox = new Dropbox(context);
         dropbox.uploadFile(file);
     }
 
     public static void uploadBackupFileToGoogleDrive(Context context, String backupFileName) throws Exception {
-        File file = getBackupFile(context, backupFileName);
+        File file = Backup.INSTANCE.findBackupFileByName(context, backupFileName);
         GoogleDriveClient driveClient = GoogleDriveClient_.getInstance_(context);
         driveClient.uploadFile(file);
     }

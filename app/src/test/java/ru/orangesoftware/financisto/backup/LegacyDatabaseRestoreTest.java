@@ -26,6 +26,7 @@ import ru.orangesoftware.financisto.model.ElectronicPaymentType;
 import ru.orangesoftware.financisto.model.MyLocation;
 import ru.orangesoftware.financisto.model.TransactionInfo;
 import ru.orangesoftware.financisto.utils.FileUtils;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.*;
@@ -271,7 +272,7 @@ public class LegacyDatabaseRestoreTest extends AbstractDbTest {
 
     private String createBackupFile(String fileContent) throws IOException {
         String fileName = "backup_" + System.currentTimeMillis() + ".backup";
-        FileOutputStream out = new FileOutputStream(new File(Export.getBackupFolder(getContext()), fileName));
+        FileOutputStream out = new FileOutputStream(new File(Backup.INSTANCE.getBackupFolder(getContext()), fileName));
         out.write(fileContent.getBytes());
         out.flush();
         out.close();
@@ -279,7 +280,7 @@ public class LegacyDatabaseRestoreTest extends AbstractDbTest {
     }
 
     private void deleteBackupFile(String fileName) {
-        new File(Export.getBackupFolder(getContext()), fileName).delete();
+        new File(Backup.INSTANCE.getBackupFolder(getContext()), fileName).delete();
     }
 
 }

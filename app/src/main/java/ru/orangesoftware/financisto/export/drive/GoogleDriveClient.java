@@ -51,6 +51,7 @@ import ru.orangesoftware.financisto.db.DatabaseAdapter;
 import ru.orangesoftware.financisto.export.Export;
 import ru.orangesoftware.financisto.export.ImportExportException;
 import ru.orangesoftware.financisto.utils.MyPreferences;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 @EBean(scope = EBean.Scope.Singleton)
 public class GoogleDriveClient {
@@ -105,7 +106,7 @@ public class GoogleDriveClient {
             ConnectionResult connectionResult = connect();
             if (connectionResult.isSuccess()) {
                 DriveFolder folder = getDriveFolder(targetFolder);
-                String fileName = export.generateFilename();
+                String fileName = Backup.INSTANCE.generateFilename(export.getExtension());
                 byte[] bytes = export.generateBackupBytes();
                 Status status = createFile(folder, fileName, bytes);
                 if (status.isSuccess()) {

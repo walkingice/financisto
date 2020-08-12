@@ -149,7 +149,7 @@ public class QifExport extends Export {
     }
 
     @Override
-    protected String getExtension() {
+    public String getExtension() {
         return ".qif";
     }
 

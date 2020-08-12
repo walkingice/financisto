@@ -35,6 +35,7 @@ import ru.orangesoftware.financisto.export.dropbox.Dropbox;
 import ru.orangesoftware.financisto.rates.ExchangeRateProviderFactory;
 import ru.orangesoftware.financisto.utils.MyPreferences;
 import ru.orangesoftware.financisto.utils.PinProtection;
+import ru.orangesoftware.financisto2.storage.Backup;
 
 import static android.Manifest.permission.GET_ACCOUNTS;
 import static ru.orangesoftware.financisto.activity.RequestPermission.isRequestingPermission;
@@ -170,7 +171,7 @@ public class PreferencesActivity extends PreferenceActivity {
     }
 
     private String getDatabaseBackupFolder() {
-        return Export.getBackupFolder(this).getAbsolutePath();
+        return Backup.INSTANCE.getBackupRootFolder(this).getAbsolutePath();
     }
 
     private void setCurrentDatabaseBackupFolder() {

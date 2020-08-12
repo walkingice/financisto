@@ -6,7 +6,6 @@ import ru.orangesoftware.financisto.db.DatabaseHelper
 import ru.orangesoftware.financisto.utils.MyPreferences
 import java.io.File
 import java.text.SimpleDateFormat
-import java.util.Arrays
 import java.util.Date
 
 object Backup {
@@ -59,13 +58,18 @@ object Backup {
     @kotlin.jvm.JvmField
     val DEFAULT_EXPORT_PATH: File = Environment.getExternalStoragePublicDirectory("financisto")
 
-    var sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
+    private val fileNameDateFormat = SimpleDateFormat("yyyyMMdd_HHmmss")
+    private val fileDirDateFormat = SimpleDateFormat("yyyyMM")
 
     fun generateFilename(extension: String): String {
-        return sdf.format(Date()) + extension
+        return fileNameDateFormat.format(Date()) + extension
     }
 
     fun getBackupFolder(context: Context?): File? {
+        return getBackupRootFolder(context)
+    }
+
+    fun getBackupRootFolder(context: Context?): File? {
         val path = MyPreferences.getDatabaseBackupFolder(context)
         var file = File(path)
         file.mkdirs()
@@ -77,13 +81,19 @@ object Backup {
         return file
     }
 
-    fun getBackupFile(context: Context?, backupFileName: String?): File? {
+    fun createBackupTargetByExtension(context: Context?, extension: String): File? {
+        val fileName = generateFilename(extension)
+        val dir = getBackupFolder(context)
+        return File(dir, fileName)
+    }
+
+    fun findBackupFileByName(context: Context?, backupFileName: String?): File? {
         val path = getBackupFolder(context)
         return File(path, backupFileName)
     }
 
-    fun listBackups(context: Context): List<File>? {
-        val backupPath = getBackupFolder(context) ?: return null
+    fun listBackups(context: Context): List<File> {
+        val backupPath = getBackupRootFolder(context) ?: return emptyList()
         val files:List<File> = backupPath.list { dir: File?, filename: String ->
             filename.endsWith(".backup")
         }.map {
