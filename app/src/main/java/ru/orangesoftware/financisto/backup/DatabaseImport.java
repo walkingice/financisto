@@ -48,8 +48,7 @@ public class DatabaseImport extends FullDatabaseImport {
     private final InputStream backupStream;
 
     public static DatabaseImport createFromFileBackup(Context context, DatabaseAdapter dbAdapter, String backupFile) throws FileNotFoundException {
-        File backupPath = Backup.INSTANCE.getBackupRootFolder(context);
-        File file = new File(backupPath, backupFile);
+        File file = Backup.INSTANCE.findBackupFileByName(context, backupFile);
         FileInputStream inputStream = new FileInputStream(file);
         return new DatabaseImport(context, dbAdapter, inputStream);
     }

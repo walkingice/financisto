@@ -5,6 +5,7 @@ import android.os.Environment
 import ru.orangesoftware.financisto.db.DatabaseHelper
 import ru.orangesoftware.financisto.utils.MyPreferences
 import java.io.File
+import java.io.FilenameFilter
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -61,12 +62,23 @@ object Backup {
     private val fileNameDateFormat = SimpleDateFormat("yyyyMMdd_HHmmss")
     private val fileDirDateFormat = SimpleDateFormat("yyyyMM")
 
+    private val fileNameFilter = FilenameFilter { _, fileName -> fileName.endsWith(".backup") }
+
     fun generateFilename(extension: String): String {
         return fileNameDateFormat.format(Date()) + extension
     }
 
-    fun getBackupFolder(context: Context?): File? {
-        return getBackupRootFolder(context)
+    fun generateDirName(): String = fileDirDateFormat.format(Date())
+
+    fun getBackupFolder(context: Context?, dirByMonth: Boolean = false): File? {
+        val rootFolder = getBackupRootFolder(context)
+        return if (dirByMonth) {
+            val subFolder = File(rootFolder, generateDirName())
+            subFolder.mkdirs()
+            subFolder
+        } else {
+            rootFolder
+        }
     }
 
     fun getBackupRootFolder(context: Context?): File? {
@@ -81,25 +93,37 @@ object Backup {
         return file
     }
 
-    fun createBackupTargetByExtension(context: Context?, extension: String): File? {
+    fun createBackupTargetByExtension(
+        context: Context?,
+        extension: String,
+        dirByMonth: Boolean = false
+    ): File? {
         val fileName = generateFilename(extension)
-        val dir = getBackupFolder(context)
+        val dir = getBackupFolder(context, dirByMonth)
         return File(dir, fileName)
     }
 
     fun findBackupFileByName(context: Context?, backupFileName: String?): File? {
-        val path = getBackupFolder(context)
-        return File(path, backupFileName)
+        val files = getFlatBackupFilesList(context)
+        return files.find { it.name == backupFileName }
     }
 
     fun listBackups(context: Context): List<File> {
-        val backupPath = getBackupRootFolder(context) ?: return emptyList()
-        val files:List<File> = backupPath.list { dir: File?, filename: String ->
-            filename.endsWith(".backup")
-        }.map {
-            File(backupPath, it)
+        return getFlatBackupFilesList(context)
+    }
+
+    private fun getFlatBackupFilesList(context: Context?): List<File> {
+        context ?: return emptyList()
+        val rootDir = getBackupRootFolder(context) ?: return emptyList()
+        val files = mutableListOf<File>()
+        // files in level 0 dir
+        files.addAll(rootDir.listFiles(fileNameFilter))
+        // files in level 1 dir
+        val dirs = rootDir.listFiles().filter { it.isDirectory && it.canRead() }
+        dirs.forEach { subDir ->
+            files.addAll(subDir.listFiles(fileNameFilter))
         }
-        return files
+        return files.sortedByDescending { it.name }
     }
 
     fun tableHasSystemIds(tableName: String?): Boolean {

@@ -272,7 +272,7 @@ public class LegacyDatabaseRestoreTest extends AbstractDbTest {
 
     private String createBackupFile(String fileContent) throws IOException {
         String fileName = "backup_" + System.currentTimeMillis() + ".backup";
-        FileOutputStream out = new FileOutputStream(new File(Backup.INSTANCE.getBackupFolder(getContext()), fileName));
+        FileOutputStream out = new FileOutputStream(new File(Backup.INSTANCE.getBackupFolder(getContext(), false), fileName));
         out.write(fileContent.getBytes());
         out.flush();
         out.close();
@@ -280,7 +280,7 @@ public class LegacyDatabaseRestoreTest extends AbstractDbTest {
     }
 
     private void deleteBackupFile(String fileName) {
-        new File(Backup.INSTANCE.getBackupFolder(getContext()), fileName).delete();
+        new File(Backup.INSTANCE.getBackupFolder(getContext(), false), fileName).delete();
     }
 
 }

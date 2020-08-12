@@ -106,7 +106,7 @@ public class DatabaseBackupTest extends AbstractImportExportTest {
     }
 
     private BufferedReader createFileReader(String fileName, boolean useGzip) throws IOException {
-        File backupPath = Backup.INSTANCE.getBackupFolder(getContext());
+        File backupPath = Backup.INSTANCE.getBackupFolder(getContext(), false);
         File file = new File(backupPath, fileName);
         InputStream in = new FileInputStream(file);
         if (useGzip) {
@@ -124,7 +124,7 @@ public class DatabaseBackupTest extends AbstractImportExportTest {
     }
 
     private String fileAsString(String backupFile) throws IOException {
-        File backupPath = Backup.INSTANCE.getBackupFolder(context);
+        File backupPath = Backup.INSTANCE.getBackupFolder(context, false);
         File file = new File(backupPath, backupFile);
         return FileUtils.readFileToString(file, "UTF-8");
     }

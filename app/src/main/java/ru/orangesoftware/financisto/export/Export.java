@@ -47,7 +47,7 @@ public abstract class Export {
         if (!RequestPermission.checkPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             throw new ImportExportException(R.string.request_permissions_storage_not_granted);
         }
-        File file = Backup.INSTANCE.createBackupTargetByExtension(context, getExtension());
+        File file = Backup.INSTANCE.createBackupTargetByExtension(context, getExtension(), false);
         FileOutputStream outputStream = new FileOutputStream(file);
         try {
             if (useGzip) {
