@@ -11,7 +11,8 @@
 package ru.orangesoftware.financisto2.template
 
 import androidx.fragment.app.Fragment
+import ru.orangesoftware.financisto2.activity.SingleFragmentActivity
 
-class SelectTemplateActivity : TemplatesListActivity() {
+class SelectTemplateActivity : SingleFragmentActivity() {
     override fun createFragment(): Fragment = SelectTemplateFragment.newInstance()
 }
