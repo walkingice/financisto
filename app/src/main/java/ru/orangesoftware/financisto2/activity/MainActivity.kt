@@ -73,7 +73,10 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
         //setupBudgetsTab(tabHost)
         //setupReportsTab(tabHost)
         //setupMenuTab(tabHost)
-//        val screen = MyPreferences.getStartupScreen(this)
+        val screen = MyPreferences.getStartupScreen(this)
+        if (screen == MyPreferences.StartupScreen.BLOTTER) {
+            viewPager.currentItem = FragmentStateAdapterImpl.Tabs.BLOTTER.ordinal
+        }
 //        tabHost.setCurrentTabByTag(screen.tag)
 //        tabHost.setOnTabChangedListener(this)
     }
