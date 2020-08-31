@@ -47,6 +47,7 @@ import ru.orangesoftware.financisto.utils.PinProtection
 
 class MainActivity : AppCompatActivity(), OnTabChangeListener {
     private var greenRobotBus: GreenRobotBus? = null
+    private lateinit var viewPager: ViewPager2
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(MyPreferences.switchLocale(base))
@@ -59,7 +60,7 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
         greenRobotBus = GreenRobotBus_.getInstance_(this)
 
         val tabLayout = findViewById<TabLayout>(R.id.tabs)
-        val viewPager = findViewById<ViewPager2>(R.id.fragment_container)
+        viewPager = findViewById<ViewPager2>(R.id.fragment_container)
         val adapter =
             FragmentStateAdapterImpl(
                 this
@@ -69,7 +70,6 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
         initialLoad()
 //        val tabHost = tabHost
         // setupAccountsTab(tabHost)
-        //setupBlotterTab(tabHost)
         //setupBudgetsTab(tabHost)
         //setupReportsTab(tabHost)
         //setupMenuTab(tabHost)
@@ -104,6 +104,15 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
     override fun onDestroy() {
         super.onDestroy()
         PinProtection.immediateLock(this)
+    }
+
+    override fun onBackPressed() {
+        val firstTabOrdinal = FragmentStateAdapterImpl.Tabs.ACCOUNT_LIST.ordinal
+        if (viewPager.currentItem != firstTabOrdinal) {
+            viewPager.currentItem = firstTabOrdinal
+        } else {
+            super.onBackPressed()
+        }
     }
 
     private fun initialLoad() {
