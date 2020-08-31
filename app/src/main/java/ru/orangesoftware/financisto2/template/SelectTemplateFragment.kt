@@ -23,7 +23,10 @@ class SelectTemplateFragment : TemplatesListFragment() {
 
         var b = view.findViewById<Button>(R.id.bEditTemplates)
         b.setOnClickListener { arg0: View? ->
-            val intent = Intent(requireActivity(), TemplatesListActivity::class.java)
+            val intent = Intent(
+                requireActivity(),
+                ru.orangesoftware.financisto.activity.TemplatesListActivity::class.java
+            )
             startActivity(intent)
             requireActivity().setResult(Activity.RESULT_CANCELED)
             requireActivity().finish()
