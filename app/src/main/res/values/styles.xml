@@ -160,6 +160,7 @@
     <style name="BottomBarButton">
         <item name="android:layout_width">@dimen/action_button_size</item>
         <item name="android:layout_height">@dimen/action_button_size</item>
+        <item name="tint">@color/white</item>
     </style>
 
     <style name="CalculatorButton">
