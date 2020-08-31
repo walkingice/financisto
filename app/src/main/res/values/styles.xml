@@ -22,6 +22,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:windowBackground">@color/gray_800</item>
     </style>
 
     <style name="TextAppearance" parent="android:TextAppearance.Small">
