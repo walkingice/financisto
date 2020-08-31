@@ -105,6 +105,7 @@
         android:layout_height="wrap_content"
         android:backgroundTint="@color/colorPrimaryDark"
         app:borderWidth="0dp"
+        app:tint="?attr/colorControlNormal"
         app:layout_anchor="@id/fragment_bottom_bar"
         app:srcCompat="@drawable/actionbar_tiles_large" />
 
