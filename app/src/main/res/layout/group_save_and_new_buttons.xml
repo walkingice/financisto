@@ -15,15 +15,19 @@
 
     <Button
         android:id="@+id/bSave"
+        style="@style/ButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="5dp"
         android:layout_weight="1"
         android:text="@string/save" />
 
     <Button
         android:id="@+id/bSaveAndNew"
+        style="@style/ButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
         android:layout_weight="1"
         android:text="@string/save_and_new" />
 </LinearLayout>

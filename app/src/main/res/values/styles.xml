@@ -14,6 +14,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="buttonStyle">@style/ButtonStyle</item>
+        <item name="buttonBarButtonStyle">?android:buttonBarButtonStyle</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 
@@ -22,6 +24,8 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="buttonStyle">@style/ButtonStyle</item>
+        <item name="buttonBarButtonStyle">?android:buttonBarButtonStyle</item>
         <item name="android:windowBackground">@color/gray_800</item>
     </style>
 
@@ -166,10 +170,11 @@
         <item name="tint">@color/white</item>
     </style>
 
-    <style name="CalculatorButton">
+    <style name="CalculatorButton" parent="ButtonStyle">
         <item name="android:layout_width">@dimen/calculator_button_width</item>
         <item name="android:layout_height">@dimen/calculator_button_height</item>
         <item name="android:textSize">26sp</item>
+        <item name="android:layout_margin">2dp</item>
     </style>
 
     <style name="AccountTypeImage"></style>
@@ -199,4 +204,11 @@
         <item name="android:textSize">30sp</item>
     </style>
 
+    <style name="ButtonStyle" parent="Widget.AppCompat.Button">
+        <item name="android:layout_marginTop">2dp</item>
+        <item name="android:layout_marginBottom">2dp</item>
+        <item name="android:layout_marginStart">5dp</item>
+        <item name="android:layout_marginEnd">5dp</item>
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+    </style>
 </resources>

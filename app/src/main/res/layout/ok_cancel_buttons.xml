@@ -10,11 +10,12 @@
 -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/ButtonBar"
-    android:layout_width="fill_parent"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <Button
         android:id="@+id/bOK"
+        style="@style/ButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
@@ -22,6 +23,7 @@
 
     <Button
         android:id="@+id/bCancel"
+        style="@style/ButtonStyle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
