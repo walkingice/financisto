@@ -4,13 +4,15 @@ import android.Manifest
 import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
-import android.graphics.Color
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.text.InputType
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
 import android.view.Window
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.EditText
@@ -30,7 +32,6 @@ import greendroid.widget.QuickActionWidget
 import io.reactivex.disposables.CompositeDisposable
 import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.activity.AccountWidget
-import ru.orangesoftware.financisto2.activity.CategorySelector.CategorySelectorListener
 import ru.orangesoftware.financisto.activity.MyQuickAction
 import ru.orangesoftware.financisto.activity.NotificationOptionsActivity
 import ru.orangesoftware.financisto.activity.RecurrenceActivity
@@ -59,6 +60,7 @@ import ru.orangesoftware.financisto.view.AttributeViewFactory
 import ru.orangesoftware.financisto.widget.RateLayoutView
 import ru.orangesoftware.financisto2.activity.AbstractActivity
 import ru.orangesoftware.financisto2.activity.CategorySelector
+import ru.orangesoftware.financisto2.activity.CategorySelector.CategorySelectorListener
 import ru.orangesoftware.financisto2.activity.LocationSelector
 import ru.orangesoftware.financisto2.activity.PayeeSelector
 import ru.orangesoftware.financisto2.activity.ProjectSelector
@@ -106,6 +108,8 @@ abstract class AbstractTransactionActivity : AbstractActivity(), CategorySelecto
 
     protected var transaction = Transaction()
     protected var disposable = CompositeDisposable()
+
+    private var isKeyboardShowing = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -246,8 +250,12 @@ abstract class AbstractTransactionActivity : AbstractActivity(), CategorySelecto
         }
         bSaveAndNew.setOnClickListener { arg0: View? ->
             if (isEdit) {
-                setResult(Activity.RESULT_CANCELED)
-                finish()
+                if (isKeyboardShowing) {
+                    hideKeyboard(this)
+                } else {
+                    setResult(Activity.RESULT_CANCELED)
+                    finish()
+                }
             } else {
                 if (saveAndFinish()) {
                     intent!!.putExtra(
@@ -285,6 +293,8 @@ abstract class AbstractTransactionActivity : AbstractActivity(), CategorySelecto
         setupPickImageActionGrid()
         val t1 = System.currentTimeMillis()
         Log.i("TransactionActivity", "onCreate " + (t1 - t0) + "ms")
+
+        watchGlobalLayout()
     }
 
     protected fun setupPickImageActionGrid() {
@@ -689,6 +699,43 @@ abstract class AbstractTransactionActivity : AbstractActivity(), CategorySelecto
         disposable.dispose()
         if (categorySelector != null) categorySelector!!.onDestroy()
         super.onDestroy()
+    }
+
+    open fun hideKeyboard(activity: Activity) {
+        val imm = activity.getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        //Find the currently focused view, so we can grab the correct window token from it.
+        var view = activity.currentFocus
+        //If no view currently has focus, create a new one, just so we can grab a window token from it
+        if (view == null) {
+            view = View(activity)
+        }
+        imm.hideSoftInputFromWindow(view.windowToken, 0)
+    }
+
+    private fun watchGlobalLayout() {
+        findViewById<ViewGroup>(R.id.rootView)?.let { contentView ->
+            contentView.viewTreeObserver.addOnGlobalLayoutListener {
+                val r = Rect()
+                contentView.getWindowVisibleDisplayFrame(r);
+                val screenHeight = contentView.rootView.height
+
+                // r.bottom is the position above soft keypad or device button.
+                // if keypad is shown, the r.bottom is smaller than that before.
+                val keypadHeight = screenHeight - r.bottom;
+
+                if (keypadHeight > screenHeight * 0.15) { // 0.15 ratio is perhaps enough to determine keypad height.
+                    // keyboard is opened
+                    if (!isKeyboardShowing) {
+                        isKeyboardShowing = true
+                    }
+                } else {
+                    // keyboard is closed
+                    if (isKeyboardShowing) {
+                        isKeyboardShowing = false
+                    }
+                }
+            }
+        }
     }
 
     protected abstract fun editTransaction(transaction: Transaction)
