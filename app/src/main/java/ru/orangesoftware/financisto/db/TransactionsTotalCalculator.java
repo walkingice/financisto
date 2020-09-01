@@ -10,6 +10,7 @@ package ru.orangesoftware.financisto.db;
 
 import android.database.Cursor;
 import android.util.Log;
+
 import ru.orangesoftware.financisto.filter.WhereFilter;
 import ru.orangesoftware.financisto.filter.Criteria;
 import ru.orangesoftware.financisto.model.Currency;
@@ -64,8 +65,17 @@ public class TransactionsTotalCalculator {
         if (filter.getAccountId() == -1) {
             filter = excludeAccountsNotIncludedInTotalsAndSplits(filter);
         }
+        final String selectionPositive = "from_amount > 0 AND " + filter.getSelection();
+        final String selectionNegative = "from_amount < 0 AND " + filter.getSelection();
+        List<Total> positiveTotal = queryTransactions(selectionPositive);
+        List<Total> negativeTotal = queryTransactions(selectionNegative);
+        negativeTotal.addAll(positiveTotal);
+        return negativeTotal.toArray(new Total[negativeTotal.size()]);
+    }
+
+    private List<Total> queryTransactions(String selection) {
         try (Cursor c = db.db().query(V_BLOTTER_FOR_ACCOUNT_WITH_SPLITS, BALANCE_PROJECTION,
-                filter.getSelection(), filter.getSelectionArgs(),
+                selection, filter.getSelectionArgs(),
                 BALANCE_GROUPBY, null, null)) {
             int count = c.getCount();
             List<Total> totals = new ArrayList<Total>(count);
@@ -77,13 +87,23 @@ public class TransactionsTotalCalculator {
                 total.balance = balance;
                 totals.add(total);
             }
-            return totals.toArray(new Total[totals.size()]);
+            return totals;
         }
     }
 
     public Total getAccountTotal() {
         Total[] totals = getTransactionsBalance();
-        return totals.length > 0 ? totals[0] : Total.ZERO;
+        if (totals.length <= 0) {
+            return Total.ZERO;
+        } else if (totals.length == 1) {
+            return totals[0];
+        } else {
+            // if Totals has more than one item, combine them
+            for (int i = 1; i < totals.length; i++) {
+                totals[0].combine(totals[i]);
+            }
+            return totals[0];
+        }
     }
 
     public Total getBlotterBalanceInHomeCurrency() {

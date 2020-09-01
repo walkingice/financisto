@@ -69,4 +69,14 @@ public class Total {
         }
         return context.getString(R.string.not_available);
     }
+
+    public Total combine(Total another) {
+	    if (another.currency == this.currency) {
+            this.amount += another.amount;
+            this.balance += another.balance;
+            this.income += another.income;
+            this.expenses += another.expenses;
+        }
+	    return this;
+    }
 }
