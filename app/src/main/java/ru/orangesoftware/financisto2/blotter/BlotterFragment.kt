@@ -31,7 +31,6 @@ import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto.activity.AbstractTransactionActivity
 import ru.orangesoftware.financisto.activity.AccountWidget
 import ru.orangesoftware.financisto.activity.BlotterFilterActivity
-import ru.orangesoftware.financisto.activity.BlotterTotalsDetailsActivity
 import ru.orangesoftware.financisto.activity.IntegrityCheckTask
 import ru.orangesoftware.financisto.activity.MenuListActivity_
 import ru.orangesoftware.financisto.activity.MonthlyViewActivity
@@ -54,6 +53,7 @@ import ru.orangesoftware.financisto2.common.DbAdapterInstanceDelegation
 import ru.orangesoftware.financisto2.dialog.TransactionInfoDialog
 import ru.orangesoftware.financisto2.template.SelectTemplateActivity
 import ru.orangesoftware.financisto2.template.SelectTemplateFragment
+import ru.orangesoftware.financisto2.total.BlotterTotalsDetailsActivity
 
 private const val NEW_TRANSACTION_REQUEST = 1
 private const val NEW_TRANSFER_REQUEST = 3

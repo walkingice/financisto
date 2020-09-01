@@ -514,6 +514,12 @@
             android:name="ru.orangesoftware.financisto2.template.SelectTemplateActivity"
             android:label="@string/transaction_templates"
             android:theme="@style/AppTheme.Dialog" />
+
+        <activity
+            android:name="ru.orangesoftware.financisto2.total.BlotterTotalsDetailsActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:label="@string/totals"
+            android:theme="@style/AppTheme.Dialog" />
     </application>
 
 </manifest> 
