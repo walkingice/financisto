@@ -558,15 +558,16 @@ open class BlotterFragment : AbstractListFragment() {
         transactionInfoView.show(this, id, callback)
     }
 
-//    fun onBackPressed() {
-//        val searchLayout: FrameLayout =
-//            inflatedView.findViewById<FrameLayout>(R.id.search_text_frame)
-//        if (searchLayout != null && searchLayout.visibility == View.VISIBLE) {
-//            searchLayout.visibility = View.GONE
-//        } else {
-//            super.onBackPressed()
-//        }
-//    }
+    fun onBackPressed(): Boolean {
+        val searchLayout: FrameLayout =
+            inflatedView.findViewById<FrameLayout>(R.id.search_text_frame)
+        return if (searchLayout != null && searchLayout.visibility == View.VISIBLE) {
+            searchLayout.visibility = View.GONE
+            true
+        } else {
+            false
+        }
+    }
 
     companion object {
         private const val MENU_DUPLICATE = LAST_MENU_INDEX + 1

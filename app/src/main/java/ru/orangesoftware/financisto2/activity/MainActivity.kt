@@ -44,10 +44,12 @@ import ru.orangesoftware.financisto.dialog.WebViewDialog
 import ru.orangesoftware.financisto.utils.CurrencyCache
 import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.utils.PinProtection
+import java.lang.ref.WeakReference
 
 class MainActivity : AppCompatActivity(), OnTabChangeListener {
     private var greenRobotBus: GreenRobotBus? = null
     private lateinit var viewPager: ViewPager2
+    private lateinit var adapter: FragmentStateAdapterImpl
 
     override fun attachBaseContext(base: Context) {
         super.attachBaseContext(MyPreferences.switchLocale(base))
@@ -61,10 +63,7 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
 
         val tabLayout = findViewById<TabLayout>(R.id.tabs)
         viewPager = findViewById<ViewPager2>(R.id.fragment_container)
-        val adapter =
-            FragmentStateAdapterImpl(
-                this
-            )
+        adapter = FragmentStateAdapterImpl(this)
         viewPager.adapter = adapter
         TabLayoutMediator(tabLayout, viewPager, adapter.createStrategy()).attach()
         initialLoad()
@@ -107,10 +106,21 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
     }
 
     override fun onBackPressed() {
-        val firstTabOrdinal = FragmentStateAdapterImpl.Tabs.ACCOUNT_LIST.ordinal
-        if (viewPager.currentItem != firstTabOrdinal) {
-            viewPager.currentItem = firstTabOrdinal
-        } else {
+        val accountListTabOrdinal = FragmentStateAdapterImpl.Tabs.ACCOUNT_LIST.ordinal
+        val blotterTabOrdinal = FragmentStateAdapterImpl.Tabs.BLOTTER.ordinal
+        var handled = when (viewPager.currentItem) {
+            blotterTabOrdinal -> {
+                val blotterFragment = adapter.getBlotterFragment()
+                blotterFragment?.onBackPressed() ?: false
+            }
+            else -> false
+        }
+
+        if (!handled && viewPager.currentItem != accountListTabOrdinal)  {
+            viewPager.currentItem = accountListTabOrdinal
+            handled = true
+        }
+        if (!handled) {
             super.onBackPressed()
         }
     }
@@ -253,6 +263,9 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
 
     class FragmentStateAdapterImpl(val activity: FragmentActivity) :
         FragmentStateAdapter(activity) {
+
+        private var blotterFragmentRef: WeakReference<BlotterFragment>? = null
+
         enum class Tabs {
             ACCOUNT_LIST,
             BLOTTER
@@ -264,7 +277,11 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
 
         override fun createFragment(position: Int): Fragment = when (position) {
             Tabs.ACCOUNT_LIST.ordinal -> AccountListFragment()
-            Tabs.BLOTTER.ordinal -> BlotterFragment.newInstance(saveFilter = true)
+            Tabs.BLOTTER.ordinal -> {
+                val frg = BlotterFragment.newInstance(saveFilter = true)
+                blotterFragmentRef = WeakReference(frg)
+                frg
+            }
             else -> TODO("Default fragment not yet implemented")
         }
 
@@ -275,6 +292,8 @@ class MainActivity : AppCompatActivity(), OnTabChangeListener {
                 else -> "Unknown"
             }
         }
+
+        fun getBlotterFragment(): BlotterFragment? = blotterFragmentRef?.get()
     }
 
 }
