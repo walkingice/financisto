@@ -56,10 +56,12 @@
     </style>
 
     <style name="MoreButton">
+        <item name="tint">@color/gray_700</item>
         <item name="android:src">@drawable/spinner_ab_default_holo_light_am</item>
     </style>
 
     <style name="BorderlessButton">
+        <item name="android:tint">@color/gray_600</item>
         <item name="android:paddingLeft">4dip</item>
         <item name="android:paddingRight">4dip</item>
         <item name="android:textSize">14sp</item>
@@ -125,10 +127,12 @@
     </style>
 
     <style name="UpDownButton" parent="ListButton">
+        <item name="android:backgroundTint">@android:color/transparent</item>
         <item name="android:src">@drawable/ic_action_drag</item>
     </style>
 
     <style name="CalcButton" parent="ListButton">
+        <item name="android:backgroundTint">@android:color/transparent</item>
         <item name="android:src">@drawable/ic_action_calculator</item>
     </style>
 
@@ -167,7 +171,7 @@
     <style name="BottomBarButton">
         <item name="android:layout_width">@dimen/action_button_size</item>
         <item name="android:layout_height">@dimen/action_button_size</item>
-        <item name="tint">@color/white</item>
+        <item name="tint">@color/button_tint_color</item>
     </style>
 
     <style name="CalculatorButton" parent="ButtonStyle">
@@ -204,11 +208,15 @@
         <item name="android:textSize">30sp</item>
     </style>
 
-    <style name="ButtonStyle" parent="Widget.AppCompat.Button">
+    <style name="TintButton" parent="Widget.AppCompat.Button">
+        <item name="android:textColor">?android:attr/textColorPrimary</item>
+        <item name="android:tint">@color/button_tint_color</item>
+    </style>
+
+    <style name="ButtonStyle" parent="TintButton">
         <item name="android:layout_marginTop">2dp</item>
         <item name="android:layout_marginBottom">2dp</item>
         <item name="android:layout_marginStart">5dp</item>
         <item name="android:layout_marginEnd">5dp</item>
-        <item name="android:textColor">?android:attr/textColorPrimary</item>
     </style>
 </resources>
