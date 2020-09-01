@@ -200,7 +200,9 @@ public class GoogleDriveClient {
         if (folder == null || folder.equals("")) {
             throw new ImportExportException(R.string.gdocs_folder_not_configured);
         }
-        return folder;
+        String dirPostfix= Backup.INSTANCE.generateGoogleDriveDirName();
+
+        return folder + "/" + dirPostfix;
     }
 
     private DriveFolder getDriveFolder(String targetFolder) throws IOException, ImportExportException {

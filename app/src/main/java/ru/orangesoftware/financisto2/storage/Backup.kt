@@ -61,6 +61,7 @@ object Backup {
 
     private val fileNameDateFormat = SimpleDateFormat("yyyyMMdd_HHmmss")
     private val fileDirDateFormat = SimpleDateFormat("yyyyMM")
+    private val fileDirYearFormat = SimpleDateFormat("yyyy")
 
     private val fileNameFilter = FilenameFilter { _, fileName -> fileName.endsWith(".backup") }
 
@@ -69,6 +70,8 @@ object Backup {
     }
 
     fun generateDirName(): String = fileDirDateFormat.format(Date())
+
+    fun generateGoogleDriveDirName(): String = fileDirYearFormat.format(Date())
 
     fun getBackupFolder(context: Context?, dirByMonth: Boolean = false): File? {
         val rootFolder = getBackupRootFolder(context)
