@@ -110,12 +110,16 @@ open class BlotterFragment : AbstractListFragment() {
             blotterFilter = WhereFilter.fromIntent(intent)
             isAccountBlotter =
                 intent.getBooleanExtra(BlotterFilterActivity.IS_ACCOUNT_FILTER, false)
-            saveFilter = intent.getBooleanExtra(SAVE_FILTER, false)
         }
 
         if (savedInstanceState != null) {
             blotterFilter = WhereFilter.fromBundle(savedInstanceState)
         }
+
+        arguments?.let {
+            saveFilter = it.getBoolean(SAVE_FILTER, false)
+        }
+
         if (saveFilter && blotterFilter.isEmpty) {
             blotterFilter = WhereFilter.fromSharedPreferences(requireActivity().getPreferences(0))
         }
