@@ -1,6 +1,5 @@
 package ru.orangesoftware.financisto2.accountlist
 
-import android.app.AlertDialog.Builder
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
@@ -14,6 +13,7 @@ import android.widget.ImageButton
 import android.widget.ListAdapter
 import android.widget.PopupMenu
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import greendroid.widget.QuickActionGrid
 import greendroid.widget.QuickActionWidget
 import ru.orangesoftware.financisto2.AbstractListFragment
@@ -41,7 +41,6 @@ import ru.orangesoftware.financisto.utils.IntegrityCheckAutobackup
 import ru.orangesoftware.financisto.utils.MenuItemInfo
 import ru.orangesoftware.financisto.utils.MyPreferences
 import ru.orangesoftware.financisto.view.NodeInflater
-import ru.orangesoftware.financisto2.common.view.CursorAdapter
 import ru.orangesoftware.financisto2.common.DbAdapterInstanceDelegation
 import java.util.ArrayList
 import java.util.concurrent.TimeUnit.DAYS
@@ -277,7 +276,7 @@ class AccountListFragment : AbstractListFragment() {
     }
 
     override fun deleteItem(view: View, position: Int, id: Long) {
-        Builder(requireContext())
+        AlertDialog.Builder(requireContext())
             .setMessage(R.string.delete_account_confirm)
             .setPositiveButton(R.string.yes) { arg0: DialogInterface?, arg1: Int ->
                 db.deleteAccount(id)
@@ -353,7 +352,7 @@ class AccountListFragment : AbstractListFragment() {
     private fun closeOrOpenAccount() {
         val a = db.getAccount(selectedId)
         if (a.isActive) {
-            Builder(requireContext())
+            AlertDialog.Builder(requireContext())
                 .setMessage(R.string.close_account_confirm)
                 .setPositiveButton(R.string.yes) { _: DialogInterface?, _: Int ->
                     flipAccountActive(a)
@@ -372,7 +371,7 @@ class AccountListFragment : AbstractListFragment() {
     }
 
     private fun deleteAccount() {
-        Builder(requireContext())
+        AlertDialog.Builder(requireContext())
             .setMessage(R.string.delete_account_confirm)
             .setPositiveButton(R.string.yes) { arg0: DialogInterface?, arg1: Int ->
                 db.deleteAccount(selectedId)

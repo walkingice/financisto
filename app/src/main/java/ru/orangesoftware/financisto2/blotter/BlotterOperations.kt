@@ -7,8 +7,8 @@
  */
 package ru.orangesoftware.financisto2.blotter
 
-import android.app.AlertDialog
 import android.content.Intent
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import ru.orangesoftware.financisto.R
 import ru.orangesoftware.financisto2.transaction.AbstractTransactionActivity
