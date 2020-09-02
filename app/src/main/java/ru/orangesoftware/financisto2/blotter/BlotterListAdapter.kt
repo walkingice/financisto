@@ -227,13 +227,18 @@ open class BlotterListAdapter @JvmOverloads constructor(
                 v.bottomView.text = StringUtil.capitalize(
                     DateUtils.formatDateTime(
                         context, dt.time,
-                        DateUtils.FORMAT_SHOW_DATE or DateUtils.FORMAT_SHOW_TIME or DateUtils.FORMAT_ABBREV_MONTH or DateUtils.FORMAT_SHOW_WEEKDAY or DateUtils.FORMAT_ABBREV_WEEKDAY
+                        DateUtils.FORMAT_SHOW_DATE or
+                                DateUtils.FORMAT_SHOW_TIME or
+                                DateUtils.FORMAT_ABBREV_MONTH or
+                                DateUtils.FORMAT_SHOW_WEEKDAY or
+                                DateUtils.FORMAT_ABBREV_WEEKDAY
                     )
                 )
                 if (isTemplate == 0 && date > System.currentTimeMillis()) {
                     u.setFutureTextColor(v.bottomView)
                 } else {
-                    v.bottomView.setTextColor(v.topView.textColors.defaultColor)
+                    // use default color from layout xml
+                    // v.bottomView.setTextColor(v.topView.textColors.defaultColor)
                 }
             }
         }
