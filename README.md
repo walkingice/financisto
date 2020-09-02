@@ -1,10 +1,14 @@
 # Financisto
 
-[![Build Status](https://app.bitrise.io/app/a4284a64a52e1063/status.svg?token=-JUe6I0K_79mxYjxLGp9BA&branch=master)](https://app.bitrise.io/app/a4284a64a52e1063)
-
 ## About
 
 Financisto is an open-source personal finance tracker for Android platform.
+
+Financisto is great and works well.
+
+However its UI is a bit old. I forked the project to add some modifications for myself, ie: update UI. Unfortunately, it is not easy to migrate to mordern UI, and I found some functions are broken by my modifications. This repo is pretty **buggy**. Since only I am using this, so it should be fine.
+
+<img src="./assets/screenshot.jpg" width="300px"/>
 
 ## Features
 
