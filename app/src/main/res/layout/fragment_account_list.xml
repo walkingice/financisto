@@ -8,40 +8,48 @@
   Contributors:
       Denis Solonenko - initial API and implementation
 -->
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <ListView
-        android:id="@android:id/list"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="56dp">
 
-    <TextView
-        android:id="@+id/integrity_error"
+        <ListView
+            android:id="@android:id/list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/integrity_error"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FF0000"
+            android:gravity="center"
+            android:padding="3dp"
+            android:text="@string/integrity_error"
+            android:textColor="#FFFFFF"
+            android:visibility="gone" />
+    </LinearLayout>
+
+    <com.google.android.material.bottomappbar.BottomAppBar
+        android:id="@+id/fragment_bottom_bar"
+        style="@style/Widget.MaterialComponents.BottomAppBar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#FF0000"
-        android:gravity="center"
-        android:padding="3dp"
-        android:text="@string/integrity_error"
-        android:textColor="#FFFFFF"
-        android:visibility="gone" />
-
-    <LinearLayout style="@style/BottomBar">
-
-        <ImageButton
-            android:id="@+id/bAdd"
-            style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_add_big" />
-
-        <ImageButton
-            android:id="@+id/bMenu"
-            style="@style/BottomBarButton"
-            android:src="@drawable/actionbar_dot_menu" />
+        android:layout_gravity="bottom"
+        android:foregroundTint="@color/white"
+        app:hideOnScroll="false"
+        app:menu="@menu/menu_account_list_fragment">
 
         <include layout="@layout/total_text" />
-    </LinearLayout>
-</LinearLayout>
+
+    </com.google.android.material.bottomappbar.BottomAppBar>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

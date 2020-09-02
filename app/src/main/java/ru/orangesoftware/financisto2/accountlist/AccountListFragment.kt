@@ -14,6 +14,8 @@ import android.widget.ListAdapter
 import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
+import com.google.android.material.bottomappbar.BottomAppBar
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import greendroid.widget.QuickActionGrid
 import greendroid.widget.QuickActionWidget
 import ru.orangesoftware.financisto2.AbstractListFragment
@@ -64,9 +66,10 @@ class AccountListFragment : AbstractListFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         setupUi()
-        setupMenuButton()
         calculateTotals()
         integrityCheck()
+
+        initBottomAppBar(view)
     }
 
     private fun setupUi() {
@@ -77,24 +80,6 @@ class AccountListFragment : AbstractListFragment() {
             selectedId = id
             prepareAccountActionGrid()
             accountActionGrid!!.show(view)
-        }
-    }
-
-    private fun setupMenuButton() {
-        val bMenu = inflatedView.findViewById<ImageButton>(R.id.bMenu)
-        if (MyPreferences.isShowMenuButtonOnAccountsScreen(requireContext())) {
-            bMenu.setOnClickListener { v: View? ->
-                val popupMenu = PopupMenu(requireContext(), bMenu)
-                val inflater = requireActivity().menuInflater
-                inflater.inflate(R.menu.account_list_menu, popupMenu.menu)
-                popupMenu.setOnMenuItemClickListener { item: MenuItem ->
-                    handlePopupMenu(item.itemId)
-                    true
-                }
-                popupMenu.show()
-            }
-        } else {
-            bMenu.visibility = View.GONE
         }
     }
 
@@ -275,6 +260,11 @@ class AccountListFragment : AbstractListFragment() {
         )
     }
 
+    fun onButtonSettingsClicked() {
+        val intent = Intent(requireContext(), MenuListActivity_::class.java)
+        startActivity(intent)
+    }
+
     override fun deleteItem(view: View, position: Int, id: Long) {
         AlertDialog.Builder(requireContext())
             .setMessage(R.string.delete_account_confirm)
@@ -388,6 +378,20 @@ class AccountListFragment : AbstractListFragment() {
                 DAYS.toMillis(7)
             )
         )
+    }
+
+    private fun initBottomAppBar(inflated: View) {
+        val bar = inflated.findViewById<BottomAppBar>(R.id.fragment_bottom_bar) ?: return
+
+        fun menuClickListener(menu: MenuItem): Boolean {
+            when (menu.itemId) {
+                R.id.menu_item_add -> onButtonAddClicked()
+                R.id.menu_item_settings -> onButtonSettingsClicked()
+                else -> return false
+            }
+            return true
+        }
+        bar.setOnMenuItemClickListener(::menuClickListener)
     }
 
     companion object {
