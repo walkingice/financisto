@@ -77,10 +77,10 @@ public class TransactionActivity extends AbstractTransactionActivity {
         }
         if (transaction.isTemplateLike()) {
             setTitle(transaction.isTemplate() ? R.string.transaction_template : R.string.transaction_schedule);
-            if (transaction.isTemplate()) {
-                dateText.setEnabled(false);
-                timeText.setEnabled(false);
-            }
+//            if (transaction.isTemplate()) {
+//                dateText.setEnabled(false);
+//                timeText.setEnabled(false);
+//            }
         }
         prepareUnsplitActionGrid();
         currencyAsAccount.name = getString(R.string.original_currency_as_account);
