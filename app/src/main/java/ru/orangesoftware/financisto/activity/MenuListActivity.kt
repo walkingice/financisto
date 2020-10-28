@@ -47,6 +47,7 @@ import ru.orangesoftware.financisto.export.drive.DriveFileInfo
 import ru.orangesoftware.financisto.export.drive.DriveFileList
 import ru.orangesoftware.financisto.export.drive.DriveRestoreSuccess
 import ru.orangesoftware.financisto.export.drive.DropboxFileList
+import ru.orangesoftware.financisto.export.drive.GoogleDriveClientV3.ConnectionResult.NeedPermission
 import ru.orangesoftware.financisto.export.dropbox.DropboxBackupTask
 import ru.orangesoftware.financisto.export.dropbox.DropboxListFilesTask
 import ru.orangesoftware.financisto.export.dropbox.DropboxRestoreTask
@@ -199,19 +200,15 @@ open class MenuListActivity : ListActivity() {
     @Subscribe(threadMode = MAIN)
     fun onDriveConnectionFailed(event: DriveConnectionFailed) {
         dismissProgressDialog()
-        val connectionResult = event.connectionResult
-        if (connectionResult.hasResolution()) {
-            try {
-                connectionResult.startResolutionForResult(
-                    this,
-                    RESOLVE_CONNECTION_REQUEST_CODE
-                )
-            } catch (e: SendIntentException) {
-                // Unable to resolve, message user appropriately
-                onDriveBackupError(DriveBackupError(e.message))
-            }
+        if (event.connectionResult is NeedPermission) {
+            val intent = event.connectionResult.intent
+            startActivity(intent)
         } else {
-            GooglePlayServicesUtil.getErrorDialog(connectionResult.errorCode, this, 0).show()
+            Toast.makeText(
+                this,
+                "onDriveConnectionFailed",
+                Toast.LENGTH_LONG
+            ).show()
         }
     }
 
