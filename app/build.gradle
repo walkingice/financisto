@@ -113,6 +113,10 @@ dependencies {
     implementation "com.google.android.gms:play-services-drive:11.0.2"
     implementation "com.google.android.gms:play-services-plus:11.0.2"
 
+    implementation "com.google.android.gms:play-services-auth:18.1.0"
+    implementation "com.google.api-client:google-api-client-android:1.28.0"
+    implementation "com.google.apis:google-api-services-drive:v3-rev20190501-1.28.0"
+
     kapt "org.androidannotations:androidannotations:$AAVersion"
     implementation "org.androidannotations:androidannotations-api:$AAVersion"
 
