@@ -11,6 +11,7 @@ import com.google.api.client.util.ExponentialBackOff
 import com.google.api.services.drive.Drive
 import com.google.api.services.drive.DriveScopes
 import ru.orangesoftware.financisto.export.Export
+import ru.orangesoftware.financisto2.storage.Backup
 import java.io.File
 import java.io.FileOutputStream
 import java.util.Date
@@ -52,9 +53,10 @@ class GoogleDriveClientV3(val context: Context) {
     fun uploadFile(folderName: String, file: File): Boolean {
         val driveService = this.driveService ?: return false
         val topFolder = queryOrCreateTopFolder(driveService, folderName) ?: return false
+        val subFolder = queryOrCreateSubFolder(driveService, topFolder) ?: return false
         val metadata = GFile()
         metadata.name = file.name
-        metadata.parents = listOf(topFolder.id)
+        metadata.parents = listOf(subFolder.id)
         val content = FileContent(Export.BACKUP_MIME_TYPE, file)
         driveService.files()
             .create(metadata, content)
@@ -128,6 +130,40 @@ class GoogleDriveClientV3(val context: Context) {
             mimeType='$MIME_DIR'
             and name contains '$folderName'
             and 'root' in parents
+            and trashed=false
+        """.trimIndent().replace('\n', ' ')
+        val files = driveService.files().list()
+            .setQ(query)
+            .setFields("*")
+            .setOrderBy("createdTime desc")
+            .execute()
+        return if (files.files.size > 0) files.files[0] else null
+    }
+
+    private fun queryOrCreateSubFolder(
+        driveService: Drive,
+        topFolder: GFile
+    ): GFile? {
+        val subFolderName = Backup.generateDirName()
+        val subFolder = querySubFolder(driveService, topFolder)
+        return if (subFolder != null) {
+            subFolder
+        } else {
+            // create then query again
+            createFolder(driveService, subFolderName, topFolder)
+            querySubFolder(driveService, topFolder)
+        }
+    }
+
+    private fun querySubFolder(
+        driveService: Drive,
+        topFolder: GFile
+    ): GFile? {
+        val subFolderName = Backup.generateDirName()
+        val query = """
+            mimeType='$MIME_DIR'
+            and name contains '$subFolderName'
+            and '${topFolder.id}' in parents
             and trashed=false
         """.trimIndent().replace('\n', ' ')
         val files = driveService.files().list()
