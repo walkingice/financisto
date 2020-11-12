@@ -53,9 +53,8 @@ public class DatabaseImport extends FullDatabaseImport {
         return new DatabaseImport(context, dbAdapter, inputStream);
     }
 
-    public static DatabaseImport createFromGoogleDriveBackup(Context context, DatabaseAdapter db, DriveContents driveFileContents)
+    public static DatabaseImport createFromGoogleDriveBackup(Context context, DatabaseAdapter db, InputStream inputStream)
             throws IOException {
-        InputStream inputStream = driveFileContents.getInputStream();
         InputStream in = new GZIPInputStream(inputStream);
         return new DatabaseImport(context, db, in);
     }
